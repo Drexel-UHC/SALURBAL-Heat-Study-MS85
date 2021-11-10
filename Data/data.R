@@ -23,12 +23,20 @@
     mutate(grp = "65+") %>% 
     bind_rows(df_import_allAges %>% mutate(grp = "Crude")) %>% 
     mutate_all(~as.character(.x)) %>% 
-    pivot_longer(-c(city, country, salid1, grp), names_to = 'var') %>% 
-    arrange(var, grp, salid1)
+    rename(climate = level_1_climate,
+           age = grp) %>% 
+    pivot_longer(-c(city, salid1, country,age, climate), names_to = 'metric') %>% 
+    arrange(metric, country,age,climate, salid1) %>% 
+    filter(metric%in%c('p99_temperature','average_temperature')) %>% 
+    mutate(metric = metric %>% 
+             recode("p99_temperature"="RR at P99",
+                    "average_temperature"="Mean Temperature"),
+           value = as.numeric(value) %>% 
+             round(3)) %>% 
+    left_join(df__l1_centroids)
   
   
 }
 
 save(cleaned__tidy_data,
-     df__l1_centroids,
      file = "../App/R/Data/cleaned__data.rdata")

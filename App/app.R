@@ -7,8 +7,13 @@
 }
 
 
+## UI
+
+ 
+
 ### Load Modules
 source("R/Modules/UI/SalurbalHeader.R")
+source("R/Modules/UI/InputForm.R")
 source("R/Modules/UnivariateStratified/UnivariateStratified.R")
 source("R/Modules/BivariateRelationship/BivariateRelationship.R")
 source("R/Modules/CitySpecificDetails/CitySpecificDetails.R")
@@ -29,6 +34,9 @@ ui <- fluidPage(
 
 server <- function(input, output, session) {
   
+  UnivariateStratified_Server('univar', cleaned__tidy_data)
+  BivariateRelationship_Server('bivar', cleaned__tidy_data)
+  CitySpecificDetails_Server('city', cleaned__tidy_data)
 }
 
 shinyApp(ui, server)
