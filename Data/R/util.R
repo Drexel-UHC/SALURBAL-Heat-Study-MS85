@@ -19,9 +19,6 @@ sanitize_city_names = function(dfTmp){
            city = city %>% 
              str_sub(0,index-1) %>% 
              str_remove_all("\\*")%>% 
-             str_trim(),
-           ## Manually recode Aguascalientes
-           city = city %>% 
-             recode("Aguascalientes"="Aguascaliente")) %>% 
+             str_trim()) %>% 
     select(-index)
 }

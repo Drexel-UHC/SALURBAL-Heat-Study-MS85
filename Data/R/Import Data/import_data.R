@@ -17,9 +17,9 @@
   source('../util.R')
   
   ## Crosswalk
-  xwalk_l1 = read.sas7bdat('../../raw data/crosswalks/l1names_11_3_17.sas7bdat') %>% 
+  xwalk_l1 = read.csv("../../raw data/crosswalks/Sorted SALID.CSV") %>% as_tibble() %>% 
     clean_names() %>% 
-    select(salid1, city = level1_name1) %>% 
+    select(salid1=nsalid1 , city = city_name,country   ) %>% 
     sanitize_city_names()
 }
 
@@ -31,7 +31,7 @@
   df_import_allAges_raw = read.csv('../../raw data/App Data All Ages.csv') %>%  
     sanitize_city_names()%>% 
     left_join(xwalk_l1)
-  df_import_allAges_raw %>% filter(is.na(salid1)) %>% pull(city)  ## Check what cities don't have SALID1 ( 4 missing)
+  df_import_allAges_raw %>% filter(is.na(salid1)) %>% pull(city)  
   df_import_allAges = df_import_allAges_raw %>% filter(!is.na(salid1))
   
   ##  65+ 
@@ -49,8 +49,7 @@
   salid_allAges = list.files(path = "../../raw data/figures/", pattern ='ALLAGES') %>% 
     parse_number() %>% as.character()
   df_import_allAges %>%  filter(!salid1%in%salid_allAges) %>% select(city, salid1)
-    ## Missing ALLAGES figure fore Leon (205103)
-  
+
   ## 65+
   salid_65plus = list.files(path = "../../raw data/figures/", pattern ='PLUS') %>%
     str_sub(6,-1L) %>% 
