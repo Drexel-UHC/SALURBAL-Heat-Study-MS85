@@ -1,0 +1,38 @@
+.navbar {
+  background-color: #00bb9e;
+  color: #ffffff;
+  font-family: 'Helvetica Neue', Helvetica;
+  font-weight: 600;
+  border-radius: 10px;
+}
+
+.navbar-brand {
+  display: none;
+}
+
+/*Navbar Items*/
+.navbar-default .navbar-nav > li > a {
+  color: #ffffff;
+  background-color: #00bb9e;
+  font-size: 15px;
+}
+.navbar-default .navbar-nav > li > a:hover {
+  color: #00bb9e;
+  background-color: #303c51;
+  font-size: 15px;
+}
+.navbar-default .navbar-nav > .active > a {
+  color: #303c51;
+  background-color: #00bb9e;
+  font-size: 15px;
+}
+a:focus .navbar-default .navbar-nav > .active > a:hover {
+  color: #303c51;
+  background-color: #00bb9e;
+  font-size: 15px;
+}
+.navbar-default .navbar-nav > .active > a:focus {
+  color: #303c51;
+  background-color: #00bb9e;
+  font-size: 15px;
+}
