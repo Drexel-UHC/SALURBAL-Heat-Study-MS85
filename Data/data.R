@@ -19,8 +19,8 @@
 
 
 {  # 1. Process data for dashboard ------
-  ## Tidy 
-  cleaned__tidy_data1 = df_import_65plus %>% 
+  ## Process Jeff data  
+  cleaned_data_jeff = df_import_65plus %>% 
     mutate(grp = "65+") %>% 
     bind_rows(df_import_allAges %>% mutate(grp = "Crude")) %>% 
     mutate_all(~as.character(.x)) %>% 
@@ -32,27 +32,24 @@
     mutate(metric = metric %>% 
              recode("average_temperature"="Mean Temperature"),
            value = as.numeric(value) %>% 
-             round(3)) %>% 
-    left_join(df__l1_centroids %>% select(salid1, long,lat), by = 'salid1') 
-  ### Simulate rr
-  dfa = df_import_65plus %>% 
-    mutate(grp = "65+") %>% 
-    bind_rows(df_import_allAges %>% mutate(grp = "Crude")) %>% 
+             round(3)) 
+  ### process Josiah Data
+  cleaned_data_josiah = df_JK %>% 
     mutate_all(~as.character(.x)) %>% 
-    rename(climate = level_1_climate,
-           age = grp) %>% 
-    pivot_longer(-c(city, salid1, country,age, climate), names_to = 'metric') %>% 
-    arrange(metric, country,age,climate, salid1) %>% 
-    filter(metric%in%c('average_temperature')) %>% 
-    rowwise() %>% 
-    mutate(metric = 'RR at P99',
-           value = rnorm(1,1,0.1) %>%  round(3)) %>% 
-    ungroup() %>% 
-    left_join(df__l1_centroids %>% select(salid1, long,lat), by = 'salid1') 
+    pivot_longer(cols = c("rr_99vs95_per1c",  "rrcat_p99"  ,   "rr_1vs5_per1c" ,  "rrcat_p1")) %>% 
+    mutate(type = ifelse(str_detect(name, 'per1c'),"value",'cat'),
+           metric = ifelse(str_detect(name, '99'),"RR of heat-related mortality","RR of cold-related mortality")) %>% 
+    select(-name) %>% 
+    pivot_wider(names_from = type, values_from = value) %>% 
+    mutate(value = as.numeric(value) %>% round(3),
+           cat = factor(cat, levels =   c("<= 1.000" ,"1.001 - 1.049", "1.050 - 1.099", "1.100 - 1.149", "1.150 +"  )))
+
+  
   
   ## Final processing
-  cleaned__tidy_data = cleaned__tidy_data1 %>% 
-    bind_rows(dfa) %>% 
+  cleaned__tidy_data = cleaned_data_jeff %>% 
+    bind_rows(cleaned_data_josiah) %>% 
+    left_join(df__l1_centroids %>% select(salid1, long,lat), by = 'salid1') %>% 
     mutate(
       tooltip__map = glue(
         '<span class="map-tooltip-header">{city}</span><br />

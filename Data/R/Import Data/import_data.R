@@ -25,7 +25,13 @@
 
 
 
-{# 1. Data ------ 
+{# 1. Josiah Data------
+  df_JK = read_csv("../../raw data/heat_app_rr.csv") %>% clean_names() %>% 
+    mutate(age = age %>% recode("ALLAGES"="Crude",
+                                'AGE65PLUS'="65+"))
+}
+
+{# 2. Jeff Data ------ 
   
   ## All Ages
   df_import_allAges_raw = read.csv('../../raw data/App Data All Ages.csv') %>%  
@@ -40,11 +46,11 @@
     left_join(xwalk_l1) %>% filter(!is.na(salid1))
   
   ## Save
-  save(df_import_allAges, df_import_65plus, file = "imported_data.rdata")
+  save(df_import_allAges, df_import_65plus, df_JK,file = "imported_data.rdata")
   
 }
 
-{# 2. Figure Checks ------ 
+{# 3. Figure Checks ------ 
   ## All Ages
   salid_allAges = list.files(path = "../../raw data/figures/", pattern ='ALLAGES') %>% 
     parse_number() %>% as.character()
