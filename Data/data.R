@@ -42,7 +42,8 @@
     select(-name) %>% 
     pivot_wider(names_from = type, values_from = value) %>% 
     mutate(value = as.numeric(value) %>% round(3),
-           cat = factor(cat, levels =   c("<= 1.000" ,"1.001 - 1.049", "1.050 - 1.099", "1.100 - 1.149", "1.150 +"  )))
+           cat = factor(cat, levels =   c("<= 1.000" ,"1.001 - 1.049", "1.050 - 1.099", "1.100 - 1.149", "1.150 +"  ))) %>% 
+    left_join(cleaned_data_jeff %>% select(salid1, city, country, climate) %>% distinct())
 
   
   
