@@ -1,0 +1,14 @@
+name: MS85
+title: MS85
+username:
+account: drexel-uhc
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 5105711
+bundleId: 5241981
+url: https://drexel-uhc.shinyapps.io/MS85/
+when: 1636664615.43117
+lastSyncTime: 1636664615.43117
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: .Rprofile

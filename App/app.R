@@ -50,7 +50,7 @@ ui <- fluidPage(
   tags$head(includeCSS("CSS/CitySpecific.css")),
   fluidRow(
     column(4, tags$a(href='https://drexel.edu/lac/', img(class ="header-logo",src='LAC_logo.png', height = "125px"))),
-    column(8, div(class="header-brand","COVID-19 in SALURBAL Countries"))
+    column(8, div(class="header-brand","Extreme temperatures and mortality in 326 Latin American cities"))
   ),
   navbarPage( id = 'navbar',
               title = "COVID-19 in SALURBAL Countries",
