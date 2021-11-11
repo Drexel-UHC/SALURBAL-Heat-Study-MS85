@@ -21,7 +21,6 @@ InputForm_UI <- function(id) {
 InputForm_Server <- function(id,data,options, inputs_to_make){
   moduleServer(id,function(input, output, session) {
     
-    
     output$form = renderUI({
       ns <- session$ns
       ## Default Form with all fields
@@ -37,7 +36,7 @@ InputForm_Server <- function(id,data,options, inputs_to_make){
                     choices = options$age)
       )
       ## Parse inputs specific
-      selectionTmp = inputs_to_make %>% unlist() %>% is.na() %>% !.
+      selectionTmp = inputs_to_make %>% unlist() 
       
       ## Return only specified forms
       defaultForm[selectionTmp]

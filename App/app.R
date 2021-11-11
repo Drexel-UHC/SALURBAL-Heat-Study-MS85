@@ -9,6 +9,7 @@
   library(ggplot2)
   library(ggbeeswarm)
   library(plotly)
+  library(leafsync)
   load("R/Data/cleaned__data.rdata")
 }
 
@@ -39,7 +40,8 @@ ui <- fluidPage(
     column(4, tags$a(href='https://drexel.edu/lac/', img(class ="header-logo",src='LAC_logo.png', height = "125px"))),
     column(8, div(class="header-brand","COVID-19 in SALURBAL Countries"))
   ),
-  navbarPage(title = "COVID-19 in SALURBAL Countries",
+  navbarPage( id = 'navbar',
+              title = "COVID-19 in SALURBAL Countries",
              tabPanel("Univariate Stratified",UnivariateStratified_UI("univar")),
              tabPanel("Bivariate Relationship",BivariateRelationship_UI("bivar")),
              tabPanel("City-specific Details",CitySpecificDetails_UI("city"))
@@ -47,9 +49,12 @@ ui <- fluidPage(
 )
 
 server <- function(input, output, session) {
+  page = reactive(input$navbar)
+  # observeEvent(page(),print(page()))
+  
   
   UnivariateStratified_Server('univar', cleaned__tidy_data,options__input)
-  BivariateRelationship_Server('bivar', cleaned__tidy_data,options__input)
+  BivariateRelationship_Server('bivar', cleaned__tidy_data,options__input,page)
   CitySpecificDetails_Server('city', cleaned__tidy_data,options__input)
 }
 
