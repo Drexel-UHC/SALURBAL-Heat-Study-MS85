@@ -1,32 +1,36 @@
 CitySpecificOutput_UI <- function(id) {
   ns <- NS(id)
   tagList(
-    textOutput(ns('text')),
-    imageOutput(ns('figure'))
+    div(class = 'detailsContainer',
+      imageOutput(ns('figure')),
+      reactableOutput(ns('table'))
+    )
   )
 }
 
-CitySpecificOutput_Server <- function(id,data,city){
+CitySpecificOutput_Server <- function(id,metadata,dataFiltered,city){
   moduleServer(id,function(input, output, session) {
     
-    
-    output$text = renderText(unique(data()$age) %>% recode("Crude"="ALLAGES_",
-                                                           "65+"="65PLUS_") )
-    
+    ## PNG Figure
     output$figure = renderImage({
-      ## Age
-      ageTmp = unique(data()$age) %>% 
+      req(city())
+      ageTmp = unique(dataFiltered()$age) %>% 
         recode("Crude"="ALLAGES_",
                "65+"="65PLUS_")
-      
-      ## Path
-      filename <- normalizePath(file.path('./images',
-                                          paste0(ageTmp,city(),".png")))
-      
-      
-      ## Return
-      list(src = filename,
-           alt = "This is alternate text")
+      filename <- normalizePath(file.path('./images',  paste0(ageTmp,city(),".png")))
+      list(src = filename, 
+           width = "320px")
     }, deleteFile = FALSE)
+    
+    
+    ## City Details
+    output$table = renderReactable({
+      req(city())
+      metadata %>%
+        filter(salid1==city()) %>%
+        select(Metric = metric, Value = value) %>% 
+        reactable()
+    })
+    
   })
 }

@@ -18,16 +18,18 @@
 }
 
 
-{  # 1. Process data for dashboard ------
+{  # 1. Format Imported data for dashboard ------
   ## Process Jeff data  
-  cleaned_data_jeff = df_import_65plus %>% 
+  cleaned_data_jeff_all_variables =  df_import_65plus %>% 
     mutate(grp = "65+") %>% 
     bind_rows(df_import_allAges %>% mutate(grp = "Crude")) %>% 
     mutate_all(~as.character(.x)) %>% 
     rename(climate = level_1_climate,
            age = grp) %>% 
     pivot_longer(-c(city, salid1, country,age, climate), names_to = 'metric') %>% 
-    arrange(metric, country,age,climate, salid1) %>% 
+    arrange(metric, country,age,climate, salid1) 
+  
+  cleaned_data_jeff = cleaned_data_jeff_all_variables%>% 
     filter(metric%in%c('average_temperature')) %>% 
     mutate(metric = metric %>% 
              recode("average_temperature"="Mean Temperature"),
@@ -47,7 +49,12 @@
 
   
   
-  ## Final processing
+}
+
+
+{# 2. Create datastructures for dashboard------
+  
+  ## cleaned__tidy_data (for maps and plots)
   cleaned__tidy_data = cleaned_data_jeff %>% 
     bind_rows(cleaned_data_josiah) %>% 
     left_join(df__l1_centroids %>% select(salid1, long,lat), by = 'salid1') %>% 
@@ -62,7 +69,31 @@
         Value: {value}'
       )) 
   
+  ## Metadata for city specific datails
+  
+  cleaned__tidy_metadata = cleaned_data_jeff_all_variables %>% 
+    filter(age == "Crude") %>% 
+    select(salid1, city, metric, value) %>% 
+    distinct() %>% 
+    ### Filter out metrics to display
+    filter(str_detect(metric,"temperature")) %>%
+    ## Rename  
+    rowwise() %>% 
+    mutate(index = str_locate(metric,"_")[1],
+           metric = str_sub(metric,1,index-1) %>% str_trim() %>% str_to_title()) %>% 
+    ungroup() %>% 
+    ## Reoder
+    mutate(order = metric %>% recode("Average"=1,
+                                     "P1"=2,
+                                     "P5"=3,
+                                     "Median"=4,
+                                     "P95"=5,
+                                     "P99"=6)) %>% 
+    arrange(salid1, order) %>% 
+    select(-index,-order) %>% 
+    mutate(value = as.numeric(value) %>% round(3))
+  
 }
 
-save(cleaned__tidy_data,
+save(cleaned__tidy_data,cleaned__tidy_metadata,
      file = "../App/R/Data/cleaned__data.rdata")

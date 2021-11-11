@@ -73,7 +73,7 @@ server <- function(input, output, session) {
   
   UnivariateStratified_Server('univar', cleaned__tidy_data,options__input)
   BivariateRelationship_Server('bivar', cleaned__tidy_data,options__input_bivar)
-  CitySpecific_Server('city', cleaned__tidy_data,options__input_bivar,options__cities  )
+  CitySpecific_Server('city', cleaned__tidy_data,cleaned__tidy_metadata,options__input_bivar,options__cities  )
 }
 
 shinyApp(ui, server)

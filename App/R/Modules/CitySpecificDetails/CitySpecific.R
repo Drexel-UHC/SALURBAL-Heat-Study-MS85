@@ -5,18 +5,19 @@ CitySpecific_UI <- function(id) {
       column(8,align = 'center', InputForm_UI(ns('input'))),
       column(4,uiOutput(ns('inputCity')))
     ),
+    hr(),
     fluidRow(
       column(5,
              L1Map_UI(ns("map"))),
       column(7,
-             CitySpecificOutput_UI(ns('output')))
+             CitySpecificOutput_UI(ns('details')))
     )
     
     
   )
 }
 
-CitySpecific_Server <- function(id,data, options, options_cities){
+CitySpecific_Server <- function(id,data,metadata, options, options_cities){
   moduleServer(id,function(input, output, session) {
     
     ### Data
@@ -38,7 +39,8 @@ CitySpecific_Server <- function(id,data, options, options_cities){
     ### Map
     L1Map_Server('map',data,dataFiltered)
     
-    CitySpecificOutput_Server('output',dataFiltered,reactive(input$city))
+    ### City Specific Output
+    CitySpecificOutput_Server('details',metadata,dataFiltered,reactive(input$city))
     
   })
 }
