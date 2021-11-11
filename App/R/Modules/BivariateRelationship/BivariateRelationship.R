@@ -1,8 +1,16 @@
 BivariateRelationship_UI <- function(id) {
   ns <- NS(id)
   tagList(
-    InputForm_UI(ns('input')),
-    uiOutput(ns('sync_map'))
+    
+    div( class = "bivarPanel bivarInputContainer",
+         div(  div(class = 'bivar-input-header',"Variable 1: Mortality Metric"),
+               InputForm_UI(ns('input')  )),
+         div(  div(class = 'bivar-input-header',"Variable 2: Mean Temperature"))),
+    div( class = "bivarPanel", 
+         tabsetPanel(
+           tabPanel("Map", uiOutput(ns("sync_map")) ),
+           tabPanel("Beeswarm","BEE")
+         ))
   )
 }
 
@@ -10,7 +18,7 @@ BivariateRelationship_Server <- function(id, data, options,page){
   moduleServer(id,function(input, output, session) {
     
     dataFiltered <- InputForm_Server('input',data,options,list('metric'=T,'by'=F,'age'=T))
-     
+    
     output$sync_map = renderUI({output$sync_map = renderUI({
       ## Map 1
       data1 = data %>% filter(metric == "RR at P99") %>% filter(age == "Crude")

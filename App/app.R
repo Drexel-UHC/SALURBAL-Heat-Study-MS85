@@ -20,6 +20,8 @@ options__input$metric = unique(cleaned__tidy_data$metric)
 options__input$age = unique(cleaned__tidy_data$age)
 options__input$by = c("Country"="country",'Climate'='climate')
 
+options__input_bivar = options__input
+options__input_bivar$metric = unique(cleaned__tidy_data %>% filter(metric!="Mean Temperature" )%>% pull(metric))
 ### Load Helpers
 source("R/Code/Util/str_wrap_leaflet_legend_title.R")
 
@@ -36,6 +38,7 @@ ui <- fluidPage(
   tags$head(includeCSS("CSS/SalurbalHeader.css")),
   tags$head(includeCSS("CSS/SalurbalNavbarPage.css")),
   tags$head(includeCSS("CSS/LeafletMaps.css")),
+  tags$head(includeCSS("CSS/Bivar.css")),
   fluidRow(
     column(4, tags$a(href='https://drexel.edu/lac/', img(class ="header-logo",src='LAC_logo.png', height = "125px"))),
     column(8, div(class="header-brand","COVID-19 in SALURBAL Countries"))
@@ -45,7 +48,13 @@ ui <- fluidPage(
              tabPanel("Univariate Stratified",UnivariateStratified_UI("univar")),
              tabPanel("Bivariate Relationship",BivariateRelationship_UI("bivar")),
              tabPanel("City-specific Details",CitySpecificDetails_UI("city"))
-  )
+  ),
+  br(),
+  br(),
+  br(),
+  br(),
+  br(),
+  br()
 )
 
 server <- function(input, output, session) {
@@ -54,7 +63,7 @@ server <- function(input, output, session) {
   
   
   UnivariateStratified_Server('univar', cleaned__tidy_data,options__input)
-  BivariateRelationship_Server('bivar', cleaned__tidy_data,options__input,page)
+  BivariateRelationship_Server('bivar', cleaned__tidy_data,options__input_bivar,page)
   CitySpecificDetails_Server('city', cleaned__tidy_data,options__input)
 }
 
