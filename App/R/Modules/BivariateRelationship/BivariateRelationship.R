@@ -22,7 +22,7 @@ BivariateRelationship_Server <- function(id, data, options,page){
     output$sync_map = renderUI({output$sync_map = renderUI({
       ## Map 1
       data1 = data %>% filter(metric == "RR at P99") %>% filter(age == "Crude")
-      pal <-  colorNumeric("inferno", data1$value, reverse = F)
+      pal <-  colorNumeric("plasma", data1$value, reverse = F)
       leaflet1 = leaflet(data = data1) %>%
         addProviderTiles("Esri.WorldGrayCanvas") %>%
         addCircles(radius = 50000, weight = 1, color = "#777777",
@@ -38,7 +38,7 @@ BivariateRelationship_Server <- function(id, data, options,page){
       
       ## Map 2
       data2 =  data %>% filter(metric == "Mean Temperature") %>% filter(age == "Crude")
-      pal <-  colorNumeric("inferno", data2$value, reverse = F)
+      pal <-  colorNumeric("plasma", data2$value, reverse = F)
       leaflet2 = leaflet(data = data2) %>%
         addProviderTiles("Esri.WorldGrayCanvas") %>%
         addCircles(radius = 50000, weight = 1, color = "#777777",
