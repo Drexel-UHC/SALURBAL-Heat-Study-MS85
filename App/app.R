@@ -8,8 +8,11 @@
 
 
 ## UI
+options__input = list()
+options__input$metric = unique(cleaned__tidy_data$metric)
+options__input$age = unique(cleaned__tidy_data$age)
+options__input$by = c('Climate'='climate',"Country"="country")
 
- 
 
 ### Load Modules
 source("R/Modules/UI/SalurbalHeader.R")
@@ -34,9 +37,9 @@ ui <- fluidPage(
 
 server <- function(input, output, session) {
   
-  UnivariateStratified_Server('univar', cleaned__tidy_data)
-  BivariateRelationship_Server('bivar', cleaned__tidy_data)
-  CitySpecificDetails_Server('city', cleaned__tidy_data)
+  UnivariateStratified_Server('univar', cleaned__tidy_data,options__input)
+  BivariateRelationship_Server('bivar', cleaned__tidy_data,options__input)
+  CitySpecificDetails_Server('city', cleaned__tidy_data,options__input)
 }
 
 shinyApp(ui, server)

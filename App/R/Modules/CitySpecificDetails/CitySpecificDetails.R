@@ -5,7 +5,7 @@ CitySpecificDetails_UI <- function(id) {
   )
 }
 
-CitySpecificDetails_Server <- function(id,data){
+CitySpecificDetails_Server <- function(id,data, option){
   moduleServer(id,function(input, output, session) {
   
   })

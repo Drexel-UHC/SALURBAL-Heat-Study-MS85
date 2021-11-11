@@ -5,7 +5,7 @@ BivariateRelationship_UI <- function(id) {
   )
 }
 
-BivariateRelationship_Server <- function(id, data){
+BivariateRelationship_Server <- function(id, data, options){
   moduleServer(id,function(input, output, session) {
   
   })

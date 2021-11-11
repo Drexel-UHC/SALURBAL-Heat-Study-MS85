@@ -5,7 +5,7 @@ UnivariateStratified_UI <- function(id) {
   sidebarLayout(
     sidebarPanel(
       width = 3,
-      InputForm_UI('input')
+      InputForm_UI(ns('input'))
     ),
     mainPanel(   
       width = 9,
@@ -19,19 +19,12 @@ UnivariateStratified_UI <- function(id) {
   )
 }
 
-UnivariateStratified_Server <- function(id,data){
+UnivariateStratified_Server <- function(id,data, options){
   moduleServer(id,function(input, output, session) {
     
-    result <- InputForm_Server('input',data)
-    
-    
-    observeEvent(result(),
-                 print(result()))
-    
-    
-    output$selections = renderText({
-      print(result())
-    })
+    result <- InputForm_Server('input',data,options,list('metric'=T,'by'=F,'age'=T))
+ 
+    output$selections = renderText({ print(result() %>% unlist())})
   })
 }
 

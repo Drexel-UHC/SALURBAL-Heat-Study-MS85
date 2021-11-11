@@ -5,41 +5,52 @@
 #'                      2) $metric: what metric is selected tempature or RR 
 #'                      3) $by: what attribute to stratify the visualiaztion by
 #'                 if the module isntance does not require a specific property it will just
-#'                 have a value of NA  
+#'                 have a value of NA. Note the order matters by which you specify these matter!  
 
 
 InputForm_UI <- function(id) {
   ns <- NS(id)
   tagList(
-    selectInput(ns("metric"),
-                label = "Select Metric",
-                choices = 1:5),
-    selectInput(ns("by"),
-                label = "Stratify by:",
-                choices = 1:5),
-    selectInput(ns("age"),
-                label = "Select Age Group",
-                choices = 1:5)
-  )
+    uiOutput(ns('form'))
+    )
+  
 }
 
 
 
-InputForm_Server <- function(id,data){
+InputForm_Server <- function(id,data,options, inputs_to_make){
   moduleServer(id,function(input, output, session) {
- 
-    observeEvent(input$by,print(input$by))
     
-    ### Return
-    reactive({
-      # result = list()
-      # result$by = input$by
-      # result$age = input$age
-      # result$metric = input$metric
-      # print(result)
-      # print("**")
+    
+    output$form = renderUI({
+      ns <- session$ns
+      ## Default Form with all fields
+      defaultForm = tagList(
+        selectInput(ns("metric"),
+                    label = "Select Metric",
+                    choices = options$metric),
+        selectInput(ns("by"),
+                    label = "Stratify by:",
+                    choices = options$by),
+        selectInput(ns("age"),
+                    label = "Select Age Group",
+                    choices = options$age)
+      )
+      ## Parse inputs specific
+      selectionTmp = inputs_to_make %>% unlist() %>% is.na() %>% !.
       
-      input$metric
+      ## Return only specified forms
+      defaultForm[selectionTmp]
+    })
+    
+    ### Return  
+    reactive({
+      req(input$age)
+      result = list()
+      result$metric = input$metric
+      result$by = input$by
+      result$age = input$age
+      result
     })
     
     
