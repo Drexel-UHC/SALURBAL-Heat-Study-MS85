@@ -6,9 +6,9 @@ CitySpecific_UI <- function(id) {
       column(4,uiOutput(ns('inputCity')))
     ),
     fluidRow(
-      column(6,
+      column(5,
              L1Map_UI(ns("map"))),
-      column(6,
+      column(7,
              CitySpecificOutput_UI(ns('output')))
     )
     
@@ -38,7 +38,7 @@ CitySpecific_Server <- function(id,data, options, options_cities){
     ### Map
     L1Map_Server('map',data,dataFiltered)
     
-    CitySpecificOutput_Server('output',reactive(input$city))
+    CitySpecificOutput_Server('output',dataFiltered,reactive(input$city))
     
   })
 }
