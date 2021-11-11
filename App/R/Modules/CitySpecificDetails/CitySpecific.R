@@ -2,8 +2,8 @@ CitySpecific_UI <- function(id) {
   ns <- NS(id)
   tagList(
     fluidRow(
-      column(8,align = 'center', InputForm_UI(ns('input'))),
-      column(4,uiOutput(ns('inputCity')))
+      column(4,align = 'center', uiOutput(ns('inputCity'))),
+      column(8,align = 'center', InputForm_UI(ns('input')))
     ),
     hr(),
     fluidRow(
@@ -37,7 +37,7 @@ CitySpecific_Server <- function(id,data,metadata, options, options_cities){
     })
     
     ### Map
-    L1Map_Server('map',data,dataFiltered)
+    L1Map_Server('map',data,dataFiltered,reactive(input$city))
     
     ### City Specific Output
     CitySpecificOutput_Server('details',metadata,dataFiltered,reactive(input$city))

@@ -31,7 +31,7 @@ UnivariateStratified_Server <- function(id,data, options){
         reactable() })
     
     ## Map
-    L1Map_Server('map',data,dataFiltered)
+    L1Map_Server('map',data,dataFiltered,NULL)
     
     ## Distribution
     UnivariateBeeswarm_Server('distribution',dataFiltered)

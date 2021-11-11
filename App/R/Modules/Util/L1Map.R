@@ -5,7 +5,7 @@ L1Map_UI <- function(id) {
   )
 }
 
-L1Map_Server <- function(id,data,dataFiltered){
+L1Map_Server <- function(id,data,dataFiltered, citySelected){
   moduleServer(id,function(input, output, session) {
     
     ## Base Proxy Map
@@ -36,8 +36,25 @@ L1Map_Server <- function(id,data,dataFiltered){
         addLegend(position = "bottomright",
                   title = str_wrap_leaflet_legend_title(unique(dataFiltered()$metric)),
                   pal = pal, values = ~value)
-      
-      
     })
+    
+    ## Update leaflet based on citySelected()
+    observe({
+      if (!is.null(citySelected)){
+        ## Get centroid
+        req(citySelected())
+        ptTmp = dataFiltered() %>% filter(salid1 == citySelected()) 
+        cityTmp =  ptTmp$city
+        longTmp = as.numeric( ptTmp$long)
+        latTmp = as.numeric(ptTmp$lat)
+        
+        ## Manipulate map
+        leafletProxy("map") %>% 
+          clearPopups() %>% 
+          setView(lng = longTmp,lat=latTmp, zoom =5) %>%
+          addPopups(longTmp, latTmp, cityTmp )
+      }
+    })
+    
   })
 }
