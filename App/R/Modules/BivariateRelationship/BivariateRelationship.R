@@ -14,18 +14,15 @@ BivariateRelationship_UI <- function(id) {
   )
 }
 
-BivariateRelationship_Server <- function(id, data, options,page){
+BivariateRelationship_Server <- function(id, data, options){
   moduleServer(id,function(input, output, session) {
     
     ### Data
     dataFiltered <- InputForm_Server('input',data,options,list('metric'=T,'by'=F,'age'=T))
     bivarData = reactive({
-      print("***")
       df_bivar = dataFiltered() %>%
         select(salid1, by = cat) %>%
         left_join(data %>% filter(metric == "Mean Temperature") %>% filter(age == "Crude"))
-
-      print(df_bivar)
 
       df_bivar
     })

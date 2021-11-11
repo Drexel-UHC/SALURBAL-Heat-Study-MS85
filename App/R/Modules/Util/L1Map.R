@@ -33,7 +33,7 @@ L1Map_Server <- function(id,data,dataFiltered){
                    fillColor = ~pal(value), fillOpacity = 0.7 , 
                    label = ~tooltip__map %>% map(~HTML(.x))
                    ) %>% 
-        addLegend(position = "topright",
+        addLegend(position = "bottomright",
                   title = str_wrap_leaflet_legend_title(unique(dataFiltered()$metric)),
                   pal = pal, values = ~value)
       
