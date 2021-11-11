@@ -11,7 +11,7 @@ UnivariateStratified_UI <- function(id) {
       width = 9,
       tabsetPanel(
         tabPanel('Map',L1Map_UI(ns('map'))),
-        tabPanel('Distribution',UnivariateBeeswarm_UI(ns('distribution'))),
+        tabPanel('Stratified Distribution',UnivariateBeeswarm_UI(ns('distribution'))),
         tabPanel('Table',reactableOutput(ns("selections")))
         
       )
