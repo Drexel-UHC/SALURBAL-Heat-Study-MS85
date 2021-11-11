@@ -10,9 +10,9 @@ UnivariateStratified_UI <- function(id) {
     mainPanel(   
       width = 9,
       tabsetPanel(
-        tabPanel('dev',textOutput(ns("selections"))),
-        tabPanel('Map',"Map"),
-        tabPanel('Distribution',"Distribution")
+        tabPanel('Map',L1Map_UI(ns('map'))),
+        tabPanel('Distribution',"Distribution"),
+        tabPanel('Table',reactableOutput(ns("selections")))
         
       )
     )
@@ -22,9 +22,15 @@ UnivariateStratified_UI <- function(id) {
 UnivariateStratified_Server <- function(id,data, options){
   moduleServer(id,function(input, output, session) {
     
-    result <- InputForm_Server('input',data,options,list('metric'=T,'by'=F,'age'=T))
- 
-    output$selections = renderText({ print(result() %>% unlist())})
+    ## Data
+    dataFiltered <- InputForm_Server('input',data,options,list('metric'=T,'by'=F,'age'=T))
+    
+    ## Table
+    output$selections = renderReactable({ reactable(dataFiltered()) })
+    
+    ## Map
+    L1Map_Server('map',data,dataFiltered)
+    
   })
 }
 

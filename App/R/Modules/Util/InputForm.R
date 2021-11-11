@@ -43,14 +43,15 @@ InputForm_Server <- function(id,data,options, inputs_to_make){
       defaultForm[selectionTmp]
     })
     
-    ### Return  
+    ### Return Filtered data
     reactive({
       req(input$age)
-      result = list()
-      result$metric = input$metric
-      result$by = input$by
-      result$age = input$age
-      result
+      
+      dataFitlered = data %>% filter(age == input$age)
+      if (!is.null(input$by)) {dataFitlered = dataFitlered %>% rename(by = all_of(input$by))}
+      if (!is.null(input$metric)) {dataFitlered = dataFitlered %>% filter(metric == input$metric)}  
+    
+      dataFitlered
     })
     
     

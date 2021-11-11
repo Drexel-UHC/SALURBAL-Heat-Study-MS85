@@ -5,7 +5,8 @@
   library(janitor)
   library(sas7bdat)
   library(stringi)
-
+  library(glue)
+  
   ## Load Helper functions
   source('R/util.R')
   
@@ -34,7 +35,6 @@
              round(3)) %>% 
     left_join(df__l1_centroids %>% select(salid1, long,lat), by = 'salid1') 
   ### Simulate rr
-  
   dfa = df_import_65plus %>% 
     mutate(grp = "65+") %>% 
     bind_rows(df_import_allAges %>% mutate(grp = "Crude")) %>% 
@@ -50,9 +50,19 @@
     ungroup() %>% 
     left_join(df__l1_centroids %>% select(salid1, long,lat), by = 'salid1') 
   
-  
+  ## Final processing
   cleaned__tidy_data = cleaned__tidy_data1 %>% 
-    bind_rows(dfa) 
+    bind_rows(dfa) %>% 
+    mutate(
+      tooltip__map = glue(
+        '<span class="map-tooltip-header">{city}</span><br />
+        SALID1: {salid1}<br />
+        {metric}: {value}'),
+      tooltip__beeswarmPlotly = glue(
+        '<b>{city}</b>
+        Country: {country}
+        Value: {value}'
+      )) 
   
 }
 
