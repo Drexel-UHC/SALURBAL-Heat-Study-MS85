@@ -11,7 +11,7 @@ UnivariateStratified_UI <- function(id) {
       width = 9,
       tabsetPanel(
         tabPanel('Map',L1Map_UI(ns('map'))),
-        tabPanel('Distribution',"Distribution"),
+        tabPanel('Distribution',UnivariateBeeswarm_UI(ns('distribution'))),
         tabPanel('Table',reactableOutput(ns("selections")))
         
       )
@@ -26,10 +26,15 @@ UnivariateStratified_Server <- function(id,data, options){
     dataFiltered <- InputForm_Server('input',data,options,list('metric'=T,'by'=F,'age'=T))
     
     ## Table
-    output$selections = renderReactable({ reactable(dataFiltered()) })
+    output$selections = renderReactable({ dataFiltered() %>% 
+        select(city, 2, metric, value) %>% 
+        reactable() })
     
     ## Map
     L1Map_Server('map',data,dataFiltered)
+    
+    ## Distribution
+    UnivariateBeeswarm_Server('distribution',dataFiltered)
     
   })
 }

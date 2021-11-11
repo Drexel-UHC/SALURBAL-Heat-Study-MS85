@@ -6,6 +6,9 @@
   library(reactable)
   library(stringr)
   library(purrr)
+  library(ggplot2)
+  library(ggbeeswarm)
+  library(plotly)
   load("R/Data/cleaned__data.rdata")
 }
 
@@ -14,7 +17,7 @@
 options__input = list()
 options__input$metric = unique(cleaned__tidy_data$metric)
 options__input$age = unique(cleaned__tidy_data$age)
-options__input$by = c('Climate'='climate',"Country"="country")
+options__input$by = c("Country"="country",'Climate'='climate')
 
 ### Load Helpers
 source("R/Code/Util/str_wrap_leaflet_legend_title.R")
@@ -23,6 +26,7 @@ source("R/Code/Util/str_wrap_leaflet_legend_title.R")
 source("R/Modules/Util/SalurbalHeader.R")
 source("R/Modules/Util/InputForm.R")
 source("R/Modules/Util/L1Map.R")
+source("R/Modules/Util/UnivariateBeeswarm.R")
 source("R/Modules/UnivariateStratified/UnivariateStratified.R")
 source("R/Modules/BivariateRelationship/BivariateRelationship.R")
 source("R/Modules/CitySpecificDetails/CitySpecificDetails.R")
