@@ -17,11 +17,11 @@ CitySpecific_UI <- function(id) {
   )
 }
 
-CitySpecific_Server <- function(id,data,metadata, options, options_cities){
+CitySpecific_Server <- function(id,data,metadata, options){
   moduleServer(id,function(input, output, session) {
     
     ### Data
-    dataFiltered <- InputForm_Server('input',data,options,list('metric'=T,'age'=T))
+    dataFiltered <- InputForm_Server('input',data,options$metric,options$age)
     
     ### City Selection
     output$inputCity = renderUI({
@@ -29,7 +29,7 @@ CitySpecific_Server <- function(id,data,metadata, options, options_cities){
       pickerInput(
         inputId = ns('city'),
         label = "Select City", 
-        choices =options_cities,
+        choices =options$cities,
         options = list(
           `live-search` = TRUE,
           size =7)
