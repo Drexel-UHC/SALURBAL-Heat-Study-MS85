@@ -47,20 +47,17 @@
 
 
 ui <- fluidPage(
-  tags$head(includeCSS("CSS/SalurbalHeader.css")),
+  tags$head(includeCSS("CSS/appHeader.css")),
   tags$head(includeCSS("CSS/SalurbalNavbarPage.css")),
   tags$head(includeCSS("CSS/Home.css")),
   tags$head(includeCSS("CSS/LeafletMaps.css")),
   tags$head(includeCSS("CSS/Bivar.css")),
   tags$head(includeCSS("CSS/CitySpecific.css")),
-  fluidRow(
-    column(4, tags$a(href='https://drexel.edu/lac/', img(class ="header-logo",src='LAC_logo.png', height = "125px"))),
-    column(8, div(class="header-brand","Extreme temperatures and mortality in 326 Latin American cities"))
-  ),
+  tags$head(includeHTML("html/headScripts.html")),
+  includeHTML("HTML/appHeader.html"),
   navbarPage( id = 'navbar',
               title = "COVID-19 in SALURBAL Countries",
               tabPanel("Home",includeHTML("html/homePaperIntro.html")),
-              tabPanel("Univariate Stratified",UnivariateStratified_UI("univar")),
               tabPanel("Univariate Stratified",UnivariateStratified_UI("univar")),
               tabPanel("Bivariate Relationship",BivariateRelationship_UI("bivar")),
               tabPanel("City-specific Details",CitySpecific_UI("city"))

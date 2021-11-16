@@ -4,6 +4,7 @@
   font-family: 'Helvetica Neue', Helvetica;
   font-weight: 600;
   border-radius: 10px;
+  display: grid;
 }
 
 .navbar-brand {

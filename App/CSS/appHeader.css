@@ -1,0 +1,32 @@
+/* Learn More */
+.BCHC_top_row {
+  padding: 5px;
+  display: grid;
+  grid-template-columns: 200px 1fr 200px;
+  align-items: center;
+}
+.BCHC_top_row img {
+  grid-column: 1/2;
+  height: 125px;
+}
+.BCHC_learn_more {
+  grid-column: 3/4;
+  padding: 23px;
+  justify-self: start;
+}
+.BCHC_learn_more_text {
+  color: var(--uhcGray2);
+  font-size: 11px;
+}
+.BCHC_learn_more_link {
+  color: var(--uhcBlue);
+  font-size: 14px;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+/* Util */
+
+.salurbal_hr {
+  border-top: 1px dashed #00bb9e;
+}
