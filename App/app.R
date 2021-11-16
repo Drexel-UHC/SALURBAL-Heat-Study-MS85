@@ -12,13 +12,14 @@
   library(plotly)
   library(leafsync)
   library(shinyWidgets)
+  
+  ### Data 
   load("R/Data/cleaned__data_ui.rdata")
   
   ### Load Helpers
   source("R/Code/Util/str_wrap_leaflet_legend_title.R")
   
   ### Load Modules
-  source("R/Modules/Util/SalurbalHeader.R")
   source("R/Modules/Util/SalurbalFooter.R")
   source("R/Modules/Util/InputForm.R")
   source("R/Modules/Util/L1Map.R")

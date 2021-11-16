@@ -30,10 +30,10 @@
     arrange(metric, country,age,climate, salid1) 
   
   cleaned_data_jeff = cleaned_data_jeff_all_variables%>% 
-    filter(metric%in%c('average_temperature')) %>% 
-    mutate(metric = metric %>% 
-             recode("average_temperature"="Mean Temperature"),
-           value = as.numeric(value) %>% round(1)) 
+    filter(metric%in%c('average_temperature','median_temperature',
+                       'af_due_to_cold','af_due_to_extreme_cold',
+                       'af_due_to_heat','af_due_to_extreme_heat')) %>% 
+    mutate( value = as.numeric(value) %>% round(1)) 
   ### process Josiah Data
   cleaned_data_josiah = df_JK %>% 
     mutate_all(~as.character(.x)) %>% 
@@ -49,7 +49,7 @@
 
 
 {# 2.  Server data  ------
-
+  
   { # 2.1 cleaned__tidy_data ------
     #'  object for maps and plots
     cleaned__tidy_data = cleaned_data_jeff %>% 
@@ -59,8 +59,15 @@
         ## Recode age groups
         age = age %>% recode("Crude"="All-Ages"),
         ## Recode metric names
-        metric = metric %>% recode("RR of cold-related mortality"="Mortality risk per 1C lower extreme cold",
-                                   "RR of heat-related mortality"="Mortality risk per 1C higher extreme heat"),
+        metric = metric %>% recode(
+          "average_temperature"="Mean Temperature",
+          'median_temperature'='Median Temperature',
+          "af_due_to_cold"="EDF due to cold",
+          "af_due_to_extreme_cold"="EDF due to extreme cold",
+          "af_due_to_heat"='EDF due to heat',
+          'af_due_to_extreme_heat'= 'EDF due to extreme heat',
+          "RR of cold-related mortality"="Mortality risk per 1C lower extreme cold",
+          "RR of heat-related mortality"="Mortality risk per 1C higher extreme heat"),
         ## Create tooltips
         tooltip__map = glue(
           '<span class="map-tooltip-header">{city}</span><br />
@@ -101,24 +108,53 @@
     save(cleaned__tidy_data,cleaned__tidy_metadata,
          file = "../App/R/Data/cleaned__data_server.rdata")
   }
-
+  
 }
 
 {# 3. UI data------
   
   { # 3.1 Input options ------
     #' choices for inputs 
+    xwalk_metrics = cleaned__tidy_data %>% count(metric) %>% 
+      mutate(grp = case_when(
+        str_detect(metric,'EDF')~"Excess Death Fraction",
+        str_detect(metric,'Temperature')~"Temperature",
+        str_detect(metric,'risk')~"Relative Risk"),
+        order = case_when(
+          str_detect(metric,'EDF')~3,
+          str_detect(metric,'Temperature')~2,
+          str_detect(metric,'risk')~1),
+        ) %>% 
+      arrange(order)
     options__input = list()
-    options__input$metric = unique(cleaned__tidy_data$metric)
+    
+    ## Univariate Choices
+    options__input$metric = map(unique(xwalk_metrics$grp), ~{xwalk_metrics %>%  filter(grp==.x) %>% pull(metric)  }) %>% 
+      set_names( unique(xwalk_metrics$grp) )
+    
     options__input$age = unique(cleaned__tidy_data$age) %>% sort(decreasing = T)
     options__input$by = c("Country"="country",'Climate'='climate')
+    ## Bivariate choices
+    # options__input_bivar = options__input
+    # options__input$bivar_metric1 = unique(cleaned__tidy_data %>% 
+    #                                         filter(str_detect(metric,"Mortality"))%>% 
+    #                                         pull(metric))
+    # options__input$bivar_metric2_heat= unique(cleaned__tidy_data %>% 
+    #                                         filter(str_detect(metric,"EDF"),
+    #                                                str_detect(metric,"heat"))%>% 
+    #                                         pull(metric))
+    # dataTmp = cleaned__tidy_data %>% select(salid1, city) %>% distinct()
+    # options__cities =   dataTmp$salid1
+    # names(options__cities )=dataTmp$city
+    
+    
     options__input_bivar = options__input
     options__input_bivar$metric = unique(cleaned__tidy_data %>% filter(metric!="Mean Temperature" )%>% pull(metric))
     dataTmp = cleaned__tidy_data %>% select(salid1, city) %>% distinct()
     options__cities =   dataTmp$salid1
     names(options__cities )=dataTmp$city
   }
-
+  
   
   { # 2.3 Save  ------
     save(options__input,options__input_bivar,options__cities,
