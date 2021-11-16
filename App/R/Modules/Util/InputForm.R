@@ -23,34 +23,22 @@ InputForm_Server <- function(id,data,options, inputs_to_make){
     
     output$form = renderUI({
       ns <- session$ns
-      ## Default Form with all fields
-      defaultForm = tagList(
+      tagList(
         selectInput(ns("metric"),
                     label = "Select Metric",
                     choices = options$metric),
-        selectInput(ns("by"),
-                    label = "Stratify by:",
-                    choices = options$by),
         selectInput(ns("age"),
                     label = "Select Age Group",
                     choices = options$age)
       )
-      ## Parse inputs specific
-      selectionTmp = inputs_to_make %>% unlist() 
-      
-      ## Return only specified forms
-      defaultForm[selectionTmp]
     })
     
     ### Return Filtered data
     reactive({
       req(input$age)
-      
-      dataFitlered = data %>% filter(age == input$age)
-      if (!is.null(input$by)) {dataFitlered = dataFitlered %>% rename(by = all_of(input$by))}
-      if (!is.null(input$metric)) {dataFitlered = dataFitlered %>% filter(metric == input$metric)}  
-    
-      dataFitlered
+      dataFiltered = data %>% filter(metric == input$metric,
+                                     age == input$age)
+      dataFiltered
     })
     
     
