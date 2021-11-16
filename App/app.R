@@ -18,7 +18,7 @@
 ## UI
 options__input = list()
 options__input$metric = unique(cleaned__tidy_data$metric)
-options__input$age = unique(cleaned__tidy_data$age)
+options__input$age = unique(cleaned__tidy_data$age) %>% sort(decreasing = T)
 options__input$by = c("Country"="country",'Climate'='climate')
 
 options__input_bivar = options__input
@@ -34,6 +34,7 @@ source("R/Code/Util/str_wrap_leaflet_legend_title.R")
 
 ### Load Modules
 source("R/Modules/Util/SalurbalHeader.R")
+source("R/Modules/Util/SalurbalFooter.R")
 source("R/Modules/Util/InputForm.R")
 source("R/Modules/Util/L1Map.R")
 source("R/Modules/Util/UnivariateBeeswarm.R")
@@ -54,16 +55,11 @@ ui <- fluidPage(
   ),
   navbarPage( id = 'navbar',
               title = "COVID-19 in SALURBAL Countries",
-             tabPanel("Univariate Stratified",UnivariateStratified_UI("univar")),
-             tabPanel("Bivariate Relationship",BivariateRelationship_UI("bivar")),
-             tabPanel("City-specific Details",CitySpecific_UI("city"))
+              tabPanel("Univariate Stratified",UnivariateStratified_UI("univar")),
+              tabPanel("Bivariate Relationship",BivariateRelationship_UI("bivar")),
+              tabPanel("City-specific Details",CitySpecific_UI("city"))
   ),
-  br(),
-  br(),
-  br(),
-  br(),
-  br(),
-  br()
+  SalurbalFooter_UI("footer")
 )
 
 server <- function(input, output, session) {

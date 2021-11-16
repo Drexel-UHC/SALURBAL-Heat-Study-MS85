@@ -50,7 +50,7 @@ BivariateRelationship_Server <- function(id, data, options){
                   title = str_wrap_leaflet_legend_title(unique(data1$metric)),
                   pal = pal, values = ~value)
       
-      data2 =  data %>% filter(metric == "Mean Temperature") %>% filter(age == "Crude")
+      data2 =  data %>% filter(metric == "Mean Temperature") %>% filter(age == "All-Ages")
       pal <-  colorNumeric("plasma", data2$value, reverse = F)
       leaflet2 = leaflet(data = data2) %>%
         addProviderTiles("Esri.WorldGrayCanvas") %>%

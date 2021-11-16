@@ -1,7 +1,7 @@
 L1Map_UI <- function(id) {
   ns <- NS(id)
   tagList(
-    leafletOutput(ns('map'), height = '600px')
+    leafletOutput(ns('map'), height = '400px')
   )
 }
 

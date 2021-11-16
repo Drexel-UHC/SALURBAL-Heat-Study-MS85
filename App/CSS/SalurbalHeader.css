@@ -11,3 +11,7 @@
   height: 100px;
   padding: 45px;
 }
+
+.salurbal_hr {
+  border-top: 1px dashed #00bb9e;
+}

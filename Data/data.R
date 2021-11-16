@@ -33,8 +33,7 @@
     filter(metric%in%c('average_temperature')) %>% 
     mutate(metric = metric %>% 
              recode("average_temperature"="Mean Temperature"),
-           value = as.numeric(value) %>% 
-             round(3)) 
+           value = as.numeric(value) %>% round(1)) 
   ### process Josiah Data
   cleaned_data_josiah = df_JK %>% 
     mutate_all(~as.character(.x)) %>% 
@@ -59,15 +58,20 @@
     bind_rows(cleaned_data_josiah) %>% 
     left_join(df__l1_centroids %>% select(salid1, long,lat), by = 'salid1') %>% 
     mutate(
+      ## Recode age groups
+      age = age %>% recode("Crude"="All-Ages"),
+      ## Recode metric names
+      metric = metric %>% recode("RR of cold-related mortality"="Mortality risk per 1C lower extreme cold",
+                                 "RR of heat-related mortality"="Mortality risk per 1C higher extreme heat"),
+      ## Create tooltips
       tooltip__map = glue(
         '<span class="map-tooltip-header">{city}</span><br />
-        SALID1: {salid1}<br />
         {metric}: {value}'),
       tooltip__beeswarmPlotly = glue(
         '<b>{city}</b>
         Country: {country}
         Value: {value}'
-      )) 
+      ))
   
   ## Metadata for city specific datails
   
@@ -91,7 +95,8 @@
                                      "P99"=6)) %>% 
     arrange(salid1, order) %>% 
     select(-index,-order) %>% 
-    mutate(value = as.numeric(value) %>% round(3))
+    ## Format Temperature values
+    mutate(value = as.numeric(value) %>% round(1))
   
 }
 
