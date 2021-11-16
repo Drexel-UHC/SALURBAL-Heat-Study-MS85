@@ -30,13 +30,25 @@
     source("R/Modules/CitySpecificDetails/CitySpecificOutput.R")
   }
   
-  load("R/Data/cleaned__data_server.rdata")
-  
+  {
+    ## Dev env
+    load("R/Data/cleaned__data_server.rdata")
+    data = cleaned__tidy_data
+    input = list()
+    input$metric = "Mean Temperature"
+    input$age = "All-Ages"
+    by='country'
+    dataFiltered = data %>%
+      filter(metric == input$metric,
+                                   age == input$age)%>% 
+      mutate_(by={{by}}) 
+  }
 }
 
 ## Data
 
-data = cleaned__tidy_data
+
+
 
 metricTmp = "Mean Temperature"
 byTmp = "country"

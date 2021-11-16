@@ -21,7 +21,7 @@ CitySpecific_Server <- function(id,data,metadata, options, options_cities){
   moduleServer(id,function(input, output, session) {
     
     ### Data
-    dataFiltered <- InputForm_Server('input',data,options,list('metric'=T,'by'=F,'age'=T))
+    dataFiltered <- InputForm_Server('input',data,options,list('metric'=T,'age'=T))
     
     ### City Selection
     output$inputCity = renderUI({

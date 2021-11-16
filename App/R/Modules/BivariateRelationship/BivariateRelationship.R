@@ -18,7 +18,7 @@ BivariateRelationship_Server <- function(id, data, options){
   moduleServer(id,function(input, output, session) {
     
     ### Data
-    dataFiltered <- InputForm_Server('input',data,options,list('metric'=T,'by'=F,'age'=T))
+    dataFiltered <- InputForm_Server('input',data,options,list('metric'=T,'age'=T))
     bivarData = reactive({
       df_bivar = dataFiltered() %>%
         select(salid1, by = cat) %>%
