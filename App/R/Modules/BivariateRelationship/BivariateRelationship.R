@@ -22,8 +22,8 @@ BivariateRelationship_Server <- function(id, data, options){
     bivarData = reactive({
       df_bivar = dataFiltered() %>%
         select(salid1, by = cat) %>%
-        left_join(data %>% filter(metric == "Mean Temperature") %>% filter(age == "Crude"))
-
+        left_join(data %>% filter(metric == "Mean Temperature") %>% filter(age == "All-Ages"))
+      print(df_bivar)
       df_bivar
     })
     ### Distribution
@@ -31,13 +31,9 @@ BivariateRelationship_Server <- function(id, data, options){
     
     ### Sync Map
     output$sync_map = renderUI({output$sync_map = renderUI({
-      print("**sync_map**")
       req(dataFiltered())
-      print("*")
       validate(need(nrow( dataFiltered() >1),"Need Data"))
       data1 = dataFiltered() 
-    
-      print(data1)
       pal <-  colorNumeric("plasma", data1$value, reverse = F)
       leaflet1 = leaflet(data = data1) %>%
         addProviderTiles("Esri.WorldGrayCanvas") %>%

@@ -45,60 +45,85 @@
     mutate(value = as.numeric(value) %>% round(3),
            cat = factor(cat, levels =   c("<= 1.000" ,"1.001 - 1.049", "1.050 - 1.099", "1.100 - 1.149", "1.150 +"  ))) %>% 
     left_join(cleaned_data_jeff %>% select(salid1, city, country, climate) %>% distinct())
-
-  
-  
 }
 
 
-{# 2. Create datastructures for dashboard------
-  
-  ## cleaned__tidy_data (for maps and plots)
-  cleaned__tidy_data = cleaned_data_jeff %>% 
-    bind_rows(cleaned_data_josiah) %>% 
-    left_join(df__l1_centroids %>% select(salid1, long,lat), by = 'salid1') %>% 
-    mutate(
-      ## Recode age groups
-      age = age %>% recode("Crude"="All-Ages"),
-      ## Recode metric names
-      metric = metric %>% recode("RR of cold-related mortality"="Mortality risk per 1C lower extreme cold",
-                                 "RR of heat-related mortality"="Mortality risk per 1C higher extreme heat"),
-      ## Create tooltips
-      tooltip__map = glue(
-        '<span class="map-tooltip-header">{city}</span><br />
+{# 2.  Server data  ------
+
+  { # 2.1 cleaned__tidy_data ------
+    #'  object for maps and plots
+    cleaned__tidy_data = cleaned_data_jeff %>% 
+      bind_rows(cleaned_data_josiah) %>% 
+      left_join(df__l1_centroids %>% select(salid1, long,lat), by = 'salid1') %>% 
+      mutate(
+        ## Recode age groups
+        age = age %>% recode("Crude"="All-Ages"),
+        ## Recode metric names
+        metric = metric %>% recode("RR of cold-related mortality"="Mortality risk per 1C lower extreme cold",
+                                   "RR of heat-related mortality"="Mortality risk per 1C higher extreme heat"),
+        ## Create tooltips
+        tooltip__map = glue(
+          '<span class="map-tooltip-header">{city}</span><br />
         {metric}: {value}'),
-      tooltip__beeswarmPlotly = glue(
-        '<b>{city}</b>
+        tooltip__beeswarmPlotly = glue(
+          '<b>{city}</b>
         Country: {country}
         Value: {value}'
-      ))
+        ))
+  }
+  { # 2.2 cleaned__tidy_metadata ------
+    #' Metadata for city specific details
+    cleaned__tidy_metadata = cleaned_data_jeff_all_variables %>% 
+      filter(age == "Crude") %>% 
+      select(salid1, city, metric, value) %>% 
+      distinct() %>% 
+      ### Filter out metrics to display
+      filter(str_detect(metric,"temperature")) %>%
+      ## Rename  
+      rowwise() %>% 
+      mutate(index = str_locate(metric,"_")[1],
+             metric = str_sub(metric,1,index-1) %>% str_trim() %>% str_to_title()) %>% 
+      ungroup() %>% 
+      ## Reoder
+      mutate(order = metric %>% recode("Average"=1,
+                                       "P1"=2,
+                                       "P5"=3,
+                                       "Median"=4,
+                                       "P95"=5,
+                                       "P99"=6)) %>% 
+      arrange(salid1, order) %>% 
+      select(-index,-order) %>% 
+      ## Format Temperature values
+      mutate(value = as.numeric(value) %>% round(1))
+  }
   
-  ## Metadata for city specific datails
+  { # 2.3 Save  ------
+    save(cleaned__tidy_data,cleaned__tidy_metadata,
+         file = "../App/R/Data/cleaned__data_server.rdata")
+  }
+
+}
+
+{# 3. UI data------
   
-  cleaned__tidy_metadata = cleaned_data_jeff_all_variables %>% 
-    filter(age == "Crude") %>% 
-    select(salid1, city, metric, value) %>% 
-    distinct() %>% 
-    ### Filter out metrics to display
-    filter(str_detect(metric,"temperature")) %>%
-    ## Rename  
-    rowwise() %>% 
-    mutate(index = str_locate(metric,"_")[1],
-           metric = str_sub(metric,1,index-1) %>% str_trim() %>% str_to_title()) %>% 
-    ungroup() %>% 
-    ## Reoder
-    mutate(order = metric %>% recode("Average"=1,
-                                     "P1"=2,
-                                     "P5"=3,
-                                     "Median"=4,
-                                     "P95"=5,
-                                     "P99"=6)) %>% 
-    arrange(salid1, order) %>% 
-    select(-index,-order) %>% 
-    ## Format Temperature values
-    mutate(value = as.numeric(value) %>% round(1))
+  { # 3.1 Input options ------
+    #' choices for inputs 
+    options__input = list()
+    options__input$metric = unique(cleaned__tidy_data$metric)
+    options__input$age = unique(cleaned__tidy_data$age) %>% sort(decreasing = T)
+    options__input$by = c("Country"="country",'Climate'='climate')
+    options__input_bivar = options__input
+    options__input_bivar$metric = unique(cleaned__tidy_data %>% filter(metric!="Mean Temperature" )%>% pull(metric))
+    dataTmp = cleaned__tidy_data %>% select(salid1, city) %>% distinct()
+    options__cities =   dataTmp$salid1
+    names(options__cities )=dataTmp$city
+  }
+
+  
+  { # 2.3 Save  ------
+    save(options__input,options__input_bivar,options__cities,
+         file = "../App/R/Data/cleaned__data_ui.rdata")
+  }
   
 }
 
-save(cleaned__tidy_data,cleaned__tidy_metadata,
-     file = "../App/R/Data/cleaned__data.rdata")

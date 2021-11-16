@@ -12,20 +12,7 @@
   library(plotly)
   library(leafsync)
   library(shinyWidgets)
-  
-  ## Data
-  load("R/Data/cleaned__data.rdata")
-  
-  ## UI Options
-  options__input = list()
-  options__input$metric = unique(cleaned__tidy_data$metric)
-  options__input$age = unique(cleaned__tidy_data$age) %>% sort(decreasing = T)
-  options__input$by = c("Country"="country",'Climate'='climate')
-  options__input_bivar = options__input
-  options__input_bivar$metric = unique(cleaned__tidy_data %>% filter(metric!="Mean Temperature" )%>% pull(metric))
-  dataTmp = cleaned__tidy_data %>% select(salid1, city) %>% distinct()
-  options__cities =   dataTmp$salid1
-  names(options__cities )=dataTmp$city
+  load("R/Data/cleaned__data_ui.rdata")
   
   ### Load Helpers
   source("R/Code/Util/str_wrap_leaflet_legend_title.R")
@@ -66,6 +53,7 @@ ui <- fluidPage(
 )
 
 server <- function(input, output, session) {
+  load("R/Data/cleaned__data_server.rdata")
   UnivariateStratified_Server('univar', cleaned__tidy_data,options__input)
   BivariateRelationship_Server('bivar', cleaned__tidy_data,options__input_bivar)
   CitySpecific_Server('city', cleaned__tidy_data,cleaned__tidy_metadata,options__input_bivar,options__cities  )
