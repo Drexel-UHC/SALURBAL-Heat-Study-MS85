@@ -24,7 +24,7 @@ UnivariateStratified_Server <- function(id,data, options){
   moduleServer(id,function(input, output, session) {
     
     ## Data
-    dataFiltered <- InputForm_Server('input',data,options,list('metric'=T,'age'=T))
+    dataFiltered <- InputForm_Server('input',data,options$metric,options$age)
     
     ## Table
     output$selections = renderReactable({

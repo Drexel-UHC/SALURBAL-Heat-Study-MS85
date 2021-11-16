@@ -4,7 +4,7 @@ BivariateRelationship_UI <- function(id) {
     
     div( class = "bivarPanel bivarInputContainer",
          div(  div(class = 'bivar-input-header',"Variable 1: Mortality Metric"),
-               InputForm_UI(ns('input')  )),
+               InputForm_UI(ns('input1')  )),
          div(  div(class = 'bivar-input-header',"Variable 2: Mean Temperature"))),
     div( class = "bivarPanel", 
          tabsetPanel(
@@ -18,7 +18,7 @@ BivariateRelationship_Server <- function(id, data, options){
   moduleServer(id,function(input, output, session) {
     
     ### Data
-    dataFiltered <- InputForm_Server('input',data,options,list('metric'=T,'age'=T))
+    dataFiltered <- InputForm_Server('input1',data,options$bivar_metric1,options$age)
     bivarData = reactive({
       df_bivar = dataFiltered() %>%
         select(salid1, by = cat) %>%
@@ -35,7 +35,7 @@ BivariateRelationship_Server <- function(id, data, options){
       validate(need(nrow( dataFiltered() >1),"Need Data"))
       data1 = dataFiltered() 
       pal <-  colorNumeric("plasma", data1$value, reverse = F)
-      leaflet1 = leaflet(data = data1) %>%
+      leaflet1 = leaflet(data = data1,options = leafletOptions(zoomControl = FALSE)) %>%
         addProviderTiles("Esri.WorldGrayCanvas") %>%
         addCircles(radius = 50000, weight = 1, color = "#777777",
                    fillColor = ~pal(value), fillOpacity = 0.7,
@@ -48,7 +48,7 @@ BivariateRelationship_Server <- function(id, data, options){
       
       data2 =  data %>% filter(metric == "Mean Temperature") %>% filter(age == "All-Ages")
       pal <-  colorNumeric("plasma", data2$value, reverse = F)
-      leaflet2 = leaflet(data = data2) %>%
+      leaflet2 = leaflet(data = data2,options = leafletOptions(zoomControl = FALSE)) %>%
         addProviderTiles("Esri.WorldGrayCanvas") %>%
         addCircles(radius = 50000, weight = 1, color = "#777777",
                    fillColor = ~pal(value), fillOpacity = 0.7,

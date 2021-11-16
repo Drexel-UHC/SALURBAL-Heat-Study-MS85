@@ -18,7 +18,7 @@ InputForm_UI <- function(id) {
 
 
 
-InputForm_Server <- function(id,data,options, inputs_to_make){
+InputForm_Server <- function(id,data,options_metrics, options_age){
   moduleServer(id,function(input, output, session) {
     
     output$form = renderUI({
@@ -26,10 +26,10 @@ InputForm_Server <- function(id,data,options, inputs_to_make){
       tagList(
         selectInput(ns("metric"),
                     label = "Select Metric",
-                    choices = options$metric),
+                    choices = options_metrics),
         selectInput(ns("age"),
                     label = "Select Age Group",
-                    choices = options$age)
+                    choices = options_age)
       )
     })
     

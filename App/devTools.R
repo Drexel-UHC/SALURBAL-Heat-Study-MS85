@@ -34,6 +34,7 @@
     ## Dev env
     load("R/Data/cleaned__data_server.rdata")
     data = cleaned__tidy_data
+    options = options__input
     input = list()
     input$metric = "Mean Temperature"
     input$age = "All-Ages"
