@@ -115,6 +115,7 @@
   
   { # 3.1 Input options ------
     #' choices for inputs 
+    options__input = list()
     xwalk_metrics = cleaned__tidy_data %>% count(metric) %>% 
       mutate(grp = case_when(
         str_detect(metric,'EDF')~"Excess Death Fraction",
@@ -126,28 +127,29 @@
           str_detect(metric,'risk')~1),
         ) %>% 
       arrange(order)
-    options__input = list()
+    xwalk_metrics_bivar1 = xwalk_metrics %>% filter(grp=='Relative Risk')
+    xwalk_metrics_bivar2 = xwalk_metrics %>% filter(grp!='Relative Risk')
+    
+   
     
     ## Univariate Choices
     options__input$metric = map(unique(xwalk_metrics$grp), ~{xwalk_metrics %>%  filter(grp==.x) %>% pull(metric)  }) %>% 
       set_names( unique(xwalk_metrics$grp) )
-    
     options__input$age = unique(cleaned__tidy_data$age) %>% sort(decreasing = T)
     options__input$by = c("Country"="country",'Climate'='climate')
+    
     ## Bivariate choices
-    # options__input_bivar = options__input
-    # options__input$bivar_metric1 = unique(cleaned__tidy_data %>% 
-    #                                         filter(str_detect(metric,"Mortality"))%>% 
-    #                                         pull(metric))
-    # options__input$bivar_metric2_heat= unique(cleaned__tidy_data %>% 
-    #                                         filter(str_detect(metric,"EDF"),
-    #                                                str_detect(metric,"heat"))%>% 
-    #                                         pull(metric))
-    # dataTmp = cleaned__tidy_data %>% select(salid1, city) %>% distinct()
-    # options__cities =   dataTmp$salid1
-    # names(options__cities )=dataTmp$city
+    options__input$bivar_metric1 =  map(unique(xwalk_metrics_bivar1$grp), ~{xwalk_metrics_bivar1 %>%  filter(grp==.x) %>% pull(metric)  }) %>% 
+      set_names( unique(xwalk_metrics_bivar1$grp) )
+    options__input$bivar_metric2 =  map(unique(xwalk_metrics_bivar2$grp), ~{xwalk_metrics_bivar2 %>%  filter(grp==.x) %>% pull(metric)  }) %>% 
+      set_names( unique(xwalk_metrics_bivar2$grp) )
+   
+    ## City Choices
+    citiesTmp = cleaned__tidy_data %>% select(salid1, city) %>%  distinct()
+    options__input$cities = citiesTmp$salid1 %>% set_names(citiesTmp$city)
     
     
+    ## Residual code
     options__input_bivar = options__input
     options__input_bivar$metric = unique(cleaned__tidy_data %>% filter(metric!="Mean Temperature" )%>% pull(metric))
     dataTmp = cleaned__tidy_data %>% select(salid1, city) %>% distinct()
