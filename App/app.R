@@ -58,8 +58,8 @@ ui <- fluidPage(
   navbarPage( id = 'navbar',
               title = "COVID-19 in SALURBAL Countries",
               tabPanel("Home",includeHTML("html/homePaperIntro.html")),
-              tabPanel("Univariate Stratified",UnivariateStratified_UI("univar")),
-              tabPanel("Bivariate Relationship",BivariateRelationship_UI("bivar")),
+              tabPanel("Univariate Distributions",UnivariateStratified_UI("univar")),
+              tabPanel("Bivariate Relationships",BivariateRelationship_UI("bivar")),
               tabPanel("City-specific Details",CitySpecific_UI("city"))
   ),
   SalurbalFooter_UI("footer")
