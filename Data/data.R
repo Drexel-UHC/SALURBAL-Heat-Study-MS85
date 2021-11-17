@@ -150,10 +150,10 @@
           'Mortality risk per 1C lower extreme cold'=2,
           'Mean Temperature'=1,
           'Median Temperature'=2,
-          'EDF due to heat'=1,
-          'EDF due to extreme heat'=2,
-          'EDF due to cold'=1,
-          'EDF due to extreme cold'=2
+          'EDF due to heat'=2,
+          'EDF due to extreme heat'=1,
+          'EDF due to cold'=2,
+          'EDF due to extreme cold'=1
         )
       ) %>% 
       arrange(order_grp, order_metric)
