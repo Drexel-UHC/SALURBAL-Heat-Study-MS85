@@ -32,6 +32,7 @@ BivariateRelationship_Server <- function(id, data, options){
     })
     
     bivarData = reactive({
+      req(dataFiltered())
       df_bivar = dataFiltered() %>%
         select(salid1, age, cat) %>%
         left_join(data %>% filter(metric == input$input2) %>% select(salid1,age,  value,tooltip__beeswarmPlotly))
@@ -47,29 +48,29 @@ BivariateRelationship_Server <- function(id, data, options){
       req(dataFiltered())
       validate(need(nrow( dataFiltered() >1),"Need Data"))
       data1 = dataFiltered() 
-      pal <-  colorNumeric("plasma", data1$value, reverse = F)
       leaflet1 = leaflet(data = data1,options = leafletOptions(zoomControl = FALSE)) %>%
         addProviderTiles("Esri.WorldGrayCanvas") %>%
         addCircles(radius = 50000, weight = 1, color = "#777777",
-                   fillColor = ~pal(value), fillOpacity = 0.7,
-                   label = ~tooltip__map %>% map(~HTML(.x))
-                   
-        ) %>%
+                   fillColor = ~hex, fillOpacity = 0.9,
+                   label = ~tooltip__map %>% map(~HTML(.x))) %>% 
         addLegend(position = "topright",
                   title = str_wrap_leaflet_legend_title(unique(data1$metric)),
-                  pal = pal, values = ~value)
+                  opacity = 0.9,
+                  colors = options$leaflet_legend_colors, 
+                  labels  = options$leaflet_legend_labels)
       
-      data2 =  data %>% filter(metric == "Mean Temperature") %>% filter(age == "All-Ages")
-      pal <-  colorNumeric("plasma", data2$value, reverse = F)
+      data2 =  data %>% filter(metric == input$input2, age ==  unique(dataFiltered()$age))
+      pal <-  colorNumeric("plasma", data2$value, reverse = T)
       leaflet2 = leaflet(data = data2,options = leafletOptions(zoomControl = FALSE)) %>%
         addProviderTiles("Esri.WorldGrayCanvas") %>%
         addCircles(radius = 50000, weight = 1, color = "#777777",
-                   fillColor = ~pal(value), fillOpacity = 0.7,
+                   fillColor = ~pal(value), fillOpacity = 0.9,
                    label = ~tooltip__map %>% map(~HTML(.x))
                    
         ) %>%
         addLegend(position = "topright",
                   title = str_wrap_leaflet_legend_title(unique(data2$metric)),
+                  opacity = 0.9,
                   pal = pal, values = ~value)
       
       leafsync::sync(leaflet1,leaflet2, sync.cursor = F)

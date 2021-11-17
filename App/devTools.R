@@ -37,6 +37,7 @@
     options = options__input
     input = list()
     input$metric = "Mean Temperature"
+    input$metric = "Mortality risk per 1C higher extreme heat"
     input$age = "All-Ages"
     by='country'
     dataFiltered = data %>%
@@ -49,13 +50,3 @@
 ## Data
 
 
-
-
-metricTmp = "Mean Temperature"
-byTmp = "country"
-ageTmp = "Crude"
-
-dataFiltered = data %>% 
-  rename(by = all_of(byTmp)) %>% 
-  filter(age == ageTmp,
-         metric == metricTmp)
