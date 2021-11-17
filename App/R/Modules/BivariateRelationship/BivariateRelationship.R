@@ -7,6 +7,7 @@ BivariateRelationship_UI <- function(id) {
                InputForm_UI(ns('input1')  )),
          div(  div(class = 'bivar-input-header',"Variable 2: EDF/Temperature"),
                uiOutput(ns('bivar_input2')))),
+    hr(),
     div( class = "bivarPanel", 
          tabsetPanel(
            tabPanel("Map", uiOutput(ns("sync_map")) ),
@@ -46,6 +47,7 @@ BivariateRelationship_Server <- function(id, data, options){
     ### Sync Map
     output$sync_map = renderUI({output$sync_map = renderUI({
       req(dataFiltered())
+      req(input$input2)
       validate(need(nrow( dataFiltered() >1),"Need Data"))
       data1 = dataFiltered() 
       leaflet1 = leaflet(data = data1,options = leafletOptions(zoomControl = FALSE)) %>%
