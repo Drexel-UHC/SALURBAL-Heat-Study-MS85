@@ -35,7 +35,7 @@ UnivariateStratified_Server <- function(id,data, options){
       })
     
     ## Map
-    L1Map_Server('map',data,dataFiltered,NULL)
+    L1Map_Server('map',data,dataFiltered,NULL,options)
     
     ## Distributions
     UnivariateBeeswarm_Server('byCountry',dataFiltered,"country")

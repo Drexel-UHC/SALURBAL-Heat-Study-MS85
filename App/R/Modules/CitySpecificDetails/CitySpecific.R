@@ -37,7 +37,7 @@ CitySpecific_Server <- function(id,data,metadata, options){
     })
     
     ### Map
-    L1Map_Server('map',data,dataFiltered,reactive(input$city))
+    L1Map_Server('map',data,dataFiltered,reactive(input$city),options)
     
     ### City Specific Output
     CitySpecificOutput_Server('details',metadata,dataFiltered,reactive(input$city))
