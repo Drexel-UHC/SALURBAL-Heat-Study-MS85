@@ -32,6 +32,7 @@ L1Map_Server <- function(id,data,dataFiltered, citySelected, options){
           clearControls() %>%
           addCircles(radius = 50000, weight = 1, color = "#777777",
                      fillColor = ~hex, fillOpacity = 0.9 , 
+                     layerId = ~salid1,
                      label = ~tooltip__map %>% map(~HTML(.x))
           ) %>% 
           addLegend(position = "bottomright",
@@ -45,6 +46,7 @@ L1Map_Server <- function(id,data,dataFiltered, citySelected, options){
           clearControls() %>%
           addCircles(radius = 50000, weight = 1, color = "#777777",
                      fillColor = ~pal(value), fillOpacity = 0.9 , 
+                     layerId = ~salid1,
                      label = ~tooltip__map %>% map(~HTML(.x))
           ) %>% 
           addLegend(position = "bottomright",
@@ -71,6 +73,18 @@ L1Map_Server <- function(id,data,dataFiltered, citySelected, options){
           setView(lng = longTmp,lat=latTmp, zoom =5) %>%
           addPopups(longTmp, latTmp, cityTmp )
       }
+    })
+    
+    ## Handles map clicks
+    observe({
+      event <- input$map_shape_click
+      leafletProxy("map") %>% clearPopups()
+    })
+    
+    ## Returns SALID clicked 
+    reactive({
+      event <- input$map_shape_click
+      event$id
     })
     
   })

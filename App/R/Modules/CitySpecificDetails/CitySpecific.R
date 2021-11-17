@@ -23,6 +23,10 @@ CitySpecific_Server <- function(id,data,metadata, options){
     ### Data
     dataFiltered <- InputForm_Server('input',data,options$metric,options$age)
     
+    ### State: city selected
+    citySelected = reactiveVal(value = unname(options$cities[1]))
+    observeEvent(citySelected(),print(citySelected()))
+    
     ### City Selection
     output$inputCity = renderUI({
       ns <- session$ns
@@ -35,12 +39,22 @@ CitySpecific_Server <- function(id,data,metadata, options){
           size =7)
       )
     })
+    observeEvent(input$city,{citySelected(input$city)}) ## Update state
+    
     
     ### Map
-    L1Map_Server('map',data,dataFiltered,reactive(input$city),options)
+    cityClicked <- L1Map_Server('map',data,dataFiltered,citySelected,options)
+    observeEvent(cityClicked(),{
+      # Update state
+      citySelected(cityClicked())
+      # Update selection
+      updatePickerInput(session = session,
+                        inputId='city', 
+                        selected = citySelected())
+    })
     
     ### City Specific Output
-    CitySpecificOutput_Server('details',metadata,dataFiltered,reactive(input$city))
+    CitySpecificOutput_Server('details',metadata,dataFiltered,citySelected)
     
   })
 }
