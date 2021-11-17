@@ -1,7 +1,7 @@
 L1Map_UI <- function(id) {
   ns <- NS(id)
   tagList(
-    leafletOutput(ns('map'), height = '400px')
+    leafletOutput(ns('map'), height = '500px')
   )
 }
 
@@ -11,7 +11,7 @@ L1Map_Server <- function(id,data,dataFiltered, citySelected, options){
     ## Base Proxy Map
     output$map <- renderLeaflet({
       l1_lat_long = data %>% select(salid1, lat, long) %>% distinct()
-      leaflet(l1_lat_long) %>% 
+      leaflet(l1_lat_long,options = leafletOptions(zoomControl = FALSE)) %>% 
         addProviderTiles("Esri.WorldGrayCanvas") %>%
         fitBounds(~min(long), ~min(lat), ~max(long), ~max(lat))
     })
@@ -63,7 +63,7 @@ L1Map_Server <- function(id,data,dataFiltered, citySelected, options){
         ## Get centroid
         req(citySelected())
         ptTmp = dataFiltered() %>% filter(salid1 == citySelected()) 
-        cityTmp =  ptTmp$city
+        cityTmp =  HTML(paste0('<span class = "popupText">',ptTmp$city,'</span>'))
         longTmp = as.numeric( ptTmp$long)
         latTmp = as.numeric(ptTmp$lat)
         

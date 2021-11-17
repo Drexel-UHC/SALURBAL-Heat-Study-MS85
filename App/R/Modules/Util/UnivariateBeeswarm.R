@@ -29,7 +29,7 @@ UnivariateBeeswarm_Server <- function(id,dataFiltered,by ){
       
       ## Var Label
       var_short_tmp = unique(dfTmpOrdered$metric)
-      
+      yTmp = ifelse(by=="cat",unique(dfTmpOrdered$metric1),by) 
       ## Plot
       gg = dfTmpOrdered %>% 
         ggplot(mapping=aes(value,by, text = tooltip__beeswarmPlotly)) + 
@@ -38,7 +38,7 @@ UnivariateBeeswarm_Server <- function(id,dataFiltered,by ){
         theme_minimal()+
         labs(y = "",
              x= var_short_tmp)+ 
-        scale_color_discrete(name = str_to_title(by))
+        scale_color_discrete(name = str_to_title(yTmp) %>% str_wrap_leaflet_legend_title())
       
       
       ggplotly(gg, tooltip = 'text' )
