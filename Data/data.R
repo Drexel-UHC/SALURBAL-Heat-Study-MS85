@@ -77,8 +77,17 @@
         tooltip__beeswarmPlotly = glue(
           '<b>{city}</b>
         Country: {country}
-        Value: {value}'
-        ))
+        Value: {value}'),
+        ## Add Colors for catgorical data
+        hex = cat %>% recode(
+          "<= 1.000"="#F0F921",
+          "1.001 - 1.049"="#F89441",
+          "1.050 - 1.099"="#CC4678",
+          "1.100 - 1.149"="#7E03A8",
+          "1.150 +"="#0D0887")
+      ) 
+    
+    
   }
   { # 2.2 cleaned__tidy_metadata ------
     #' Metadata for city specific details
@@ -103,7 +112,7 @@
       arrange(salid1, order) %>% 
       select(-index,-order) %>% 
       ## Format Temperature values
-      mutate(value = as.numeric(value) %>% round(1))
+      mutate(value = as.numeric(value) %>% round(1)) 
   }
   
   { # 2.3 Save  ------
@@ -152,7 +161,7 @@
     xwalk_metrics_bivar2_hot = xwalk_metrics %>% filter(grp%in%c('Excess Death Fraction (Hot)',
                                                                  'Temperature'))
     xwalk_metrics_bivar2_cold = xwalk_metrics %>% filter(grp%in%c('Excess Death Fraction (Cold)',
-                                                                 'Temperature'))
+                                                                  'Temperature'))
     
     
     ## Univariate Choices
@@ -173,13 +182,10 @@
     citiesTmp = cleaned__tidy_data %>% select(salid1, city) %>%  distinct()
     options__input$cities = citiesTmp$salid1 %>% set_names(citiesTmp$city)
     
+    ## color/hex choices
+    options__input$leaflet_legend_labels = cleaned__tidy_data %>% drop_na() %>%  count(cat, hex) %>% pull(cat)
+    options__input$leaflet_legend_colors = cleaned__tidy_data %>% drop_na()  %>% count(cat, hex) %>% pull(hex)
     
-    ## Residual code
-    options__input_bivar = options__input
-    options__input_bivar$metric = unique(cleaned__tidy_data %>% filter(metric!="Mean Temperature" )%>% pull(metric))
-    dataTmp = cleaned__tidy_data %>% select(salid1, city) %>% distinct()
-    options__cities =   dataTmp$salid1
-    names(options__cities )=dataTmp$city
   }
   
   
