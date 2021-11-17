@@ -13,7 +13,8 @@ L1Map_Server <- function(id,data,dataFiltered, citySelected, options){
       l1_lat_long = data %>% select(salid1, lat, long) %>% distinct()
       leaflet(l1_lat_long,options = leafletOptions(zoomControl = FALSE)) %>% 
         addProviderTiles("Esri.WorldGrayCanvas") %>%
-        fitBounds(~min(long), ~min(lat), ~max(long), ~max(lat))
+        # fitBounds(~min(long), ~min(lat), ~max(long), ~max(lat)) %>% 
+        setView(lng = mean(l1_lat_long$long), lat = mean(l1_lat_long$lat) , zoom=3)
     })
     
     ## Reactive expression for color pallete, changes as data changes
