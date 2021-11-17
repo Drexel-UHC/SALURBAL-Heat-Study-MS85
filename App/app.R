@@ -41,11 +41,11 @@ ui <- fluidPage(
   tags$head(includeCSS("CSS/LeafletMaps.css")),
   tags$head(includeCSS("CSS/Bivar.css")),
   tags$head(includeCSS("CSS/CitySpecific.css")),
-  tags$head(includeHTML("html/headScripts.html")),
+  tags$head(includeHTML("HTML/headScripts.html")),
   includeHTML("HTML/appHeader.html"),
   navbarPage( id = 'navbar',
               title = "COVID-19 in SALURBAL Countries",
-              tabPanel("Home",includeHTML("html/homePaperIntro.html")),
+              tabPanel("Home",includeHTML("HTML/homePaperIntro.html")),
               tabPanel("Univariate Distributions",UnivariateStratified_UI("univar")),
               tabPanel("Bivariate Relationships",BivariateRelationship_UI("bivar")),
               tabPanel("City-specific Details",CitySpecific_UI("city"))
