@@ -33,7 +33,9 @@
     filter(metric%in%c('average_temperature','median_temperature',
                        'af_due_to_cold','af_due_to_extreme_cold',
                        'af_due_to_heat','af_due_to_extreme_heat')) %>% 
-    mutate( value = as.numeric(value) %>% round(1)) 
+    mutate( value = ifelse(str_detect(metric,'af'),
+                           as.numeric(value) %>% round(2),
+                           as.numeric(value) %>% round(1))) 
   ### process Josiah Data
   cleaned_data_josiah = df_JK %>% 
     mutate_all(~as.character(.x)) %>% 
@@ -117,20 +119,41 @@
     #' choices for inputs 
     options__input = list()
     xwalk_metrics = cleaned__tidy_data %>% count(metric) %>% 
-      mutate(grp = case_when(
-        str_detect(metric,'EDF')~"Excess Death Fraction",
-        str_detect(metric,'Temperature')~"Temperature",
-        str_detect(metric,'risk')~"Relative Risk"),
-        order = case_when(
-          str_detect(metric,'EDF')~3,
-          str_detect(metric,'Temperature')~2,
-          str_detect(metric,'risk')~1),
-        ) %>% 
-      arrange(order)
+      mutate(
+        grp = metric %>% recode(
+          'Mortality risk per 1C higher extreme heat'="Relative Risk",
+          'Mortality risk per 1C lower extreme cold'="Relative Risk",
+          'Mean Temperature'="Temperature",
+          'Median Temperature'="Temperature",
+          'EDF due to heat'="Excess Death Fraction (Hot)",
+          'EDF due to extreme heat'="Excess Death Fraction (Hot)",
+          'EDF due to cold'="Excess Death Fraction (Cold)",
+          'EDF due to extreme cold'="Excess Death Fraction (Cold)"
+        ),
+        order_grp = grp %>% recode(
+          "Relative Risk"=1,
+          "Temperature"=4,
+          "Excess Death Fraction (Hot)"=2,
+          "Excess Death Fraction (Cold)"=3
+        ),
+        order_metric = metric %>% recode(
+          'Mortality risk per 1C higher extreme heat'=1,
+          'Mortality risk per 1C lower extreme cold'=2,
+          'Mean Temperature'=1,
+          'Median Temperature'=2,
+          'EDF due to heat'=1,
+          'EDF due to extreme heat'=2,
+          'EDF due to cold'=1,
+          'EDF due to extreme cold'=2
+        )
+      ) %>% 
+      arrange(order_grp, order_metric)
     xwalk_metrics_bivar1 = xwalk_metrics %>% filter(grp=='Relative Risk')
-    xwalk_metrics_bivar2 = xwalk_metrics %>% filter(grp!='Relative Risk')
+    xwalk_metrics_bivar2_hot = xwalk_metrics %>% filter(grp%in%c('Excess Death Fraction (Hot)',
+                                                                 'Temperature'))
+    xwalk_metrics_bivar2_cold = xwalk_metrics %>% filter(grp%in%c('Excess Death Fraction (Cold)',
+                                                                 'Temperature'))
     
-   
     
     ## Univariate Choices
     options__input$metric = map(unique(xwalk_metrics$grp), ~{xwalk_metrics %>%  filter(grp==.x) %>% pull(metric)  }) %>% 
@@ -141,9 +164,11 @@
     ## Bivariate choices
     options__input$bivar_metric1 =  map(unique(xwalk_metrics_bivar1$grp), ~{xwalk_metrics_bivar1 %>%  filter(grp==.x) %>% pull(metric)  }) %>% 
       set_names( unique(xwalk_metrics_bivar1$grp) )
-    options__input$bivar_metric2 =  map(unique(xwalk_metrics_bivar2$grp), ~{xwalk_metrics_bivar2 %>%  filter(grp==.x) %>% pull(metric)  }) %>% 
-      set_names( unique(xwalk_metrics_bivar2$grp) )
-   
+    options__input$bivar_metric2_hot =  map(unique(xwalk_metrics_bivar2_hot$grp), ~{xwalk_metrics_bivar2_hot %>%  filter(grp==.x) %>% pull(metric)  }) %>% 
+      set_names( unique(xwalk_metrics_bivar2_hot$grp) )
+    options__input$bivar_metric2_cold =  map(unique(xwalk_metrics_bivar2_cold$grp), ~{xwalk_metrics_bivar2_cold %>%  filter(grp==.x) %>% pull(metric)  }) %>% 
+      set_names( unique(xwalk_metrics_bivar2_cold$grp) )
+    
     ## City Choices
     citiesTmp = cleaned__tidy_data %>% select(salid1, city) %>%  distinct()
     options__input$cities = citiesTmp$salid1 %>% set_names(citiesTmp$city)
@@ -159,7 +184,7 @@
   
   
   { # 2.3 Save  ------
-    save(options__input,options__input_bivar,options__cities,
+    save(options__input,
          file = "../App/R/Data/cleaned__data_ui.rdata")
   }
   

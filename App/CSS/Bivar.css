@@ -21,9 +21,15 @@
   padding-bottom: 5px;
 }
 
-#bivar-input1-form {
+/* #bivar-input1-form {
   display: grid;
   grid-gap: 10px;
   grid-template-columns: 1fr 1fr;
   justify-items: center;
 }
+#bivar-input2-form {
+  display: grid;
+  grid-gap: 10px;
+  grid-template-columns: 1fr 1fr;
+  justify-items: center;
+} */
