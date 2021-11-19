@@ -24,7 +24,7 @@ CitySpecific_Server <- function(id,data,metadata, options){
     dataFiltered <- InputForm_Server('input',data,options$metric,options$age)
     
     ### State: city selected
-    citySelected = reactiveVal(value = unname(options$cities[1]))
+    citySelected = reactiveVal(value = unname(options$cities[[1]][1]))
 
     ### City Selection
     output$inputCity = renderUI({
