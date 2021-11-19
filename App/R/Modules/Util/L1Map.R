@@ -27,12 +27,23 @@ L1Map_Server <- function(id,data,dataFiltered, citySelected, options){
     ## Update leaflet based on data() 
     observe({
       validate(  need(nrow(dataFiltered())>0,"Need data"))
-     
+      zoomTmp = input$map_zoom
+      print(zoomTmp)
+      radiusDefault = 50000
+      radiusTmp = case_when(
+        zoomTmp<=3~radiusDefault,
+        zoomTmp==4~radiusDefault/2,
+        zoomTmp==5~radiusDefault/3,
+        TRUE~radiusDefault/4)
+      
+      
+      if (zoomTmp>3){  
+        } 
       if (str_detect(unique(dataFiltered()$metric),'risk ')){
         leafletProxy("map", data = dataFiltered()) %>%
           clearShapes()  %>% 
           clearControls() %>%
-          addCircles(radius = 50000, weight = 1, color = "#777777",
+          addCircles(radius = radiusTmp, weight = 1, color = "#777777",
                      fillColor = ~hex, fillOpacity = 0.9 , 
                      layerId = ~salid1,
                      label = ~tooltip__map %>% map(~HTML(.x))
@@ -46,7 +57,7 @@ L1Map_Server <- function(id,data,dataFiltered, citySelected, options){
         leafletProxy("map", data = dataFiltered()) %>%
           clearShapes()  %>% 
           clearControls() %>%
-          addCircles(radius = 50000, weight = 1, color = "#777777",
+          addCircles(radius = radiusTmp, weight = 1, color = "#777777",
                      fillColor = ~pal(value), fillOpacity = 0.9 , 
                      layerId = ~salid1,
                      label = ~tooltip__map %>% map(~HTML(.x))
@@ -56,7 +67,7 @@ L1Map_Server <- function(id,data,dataFiltered, citySelected, options){
                     opacity = 0.9,
                     pal = pal, values = ~value)
       }
-     
+      
     })
     
     ## Update leaflet based on citySelected()
@@ -70,7 +81,7 @@ L1Map_Server <- function(id,data,dataFiltered, citySelected, options){
         
         ## Popup content
         popupContent =HTML(ptTmp$tooltip__map)
-         
+        
         ## Manipulate map
         leafletProxy("map") %>% 
           clearPopups() %>% 
