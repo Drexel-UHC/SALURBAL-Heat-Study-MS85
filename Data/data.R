@@ -15,6 +15,12 @@
   
   ## Load processed data
   load("R/Import Data/imported_data.rdata")
+  
+  ## Load crosswalks
+  load("../../SALURBAL Dashboard Portal/Data/Clean/Crosswalks/xwalk_iso2.rdata")
+  load("Clean/xwalk_l1.rdata")
+  load("Clean/xwalk_l1_server.rdata")
+  
 }
 
 
@@ -57,6 +63,9 @@
     cleaned__tidy_data = cleaned_data_jeff %>% 
       bind_rows(cleaned_data_josiah) %>% 
       left_join(df__l1_centroids %>% select(salid1, long,lat), by = 'salid1') %>% 
+      ## Add iso2
+      left_join(xwalk_l1_server %>% select(salid1, country2 = country)) %>% 
+      left_join(xwalk_iso2 %>% select(country2 = country, iso2)) %>% 
       mutate(
         ## Recode age groups
         age = age %>% recode("Crude"="All-Ages"),
@@ -72,10 +81,10 @@
           "RR of heat-related mortality"="Mortality risk per 1C higher extreme heat"),
         ## Create tooltips
         tooltip__map = glue(
-          '<span class="map-tooltip-header">{city}</span><br />
+          '<span class="map-tooltip-header">{city}, {iso2}</span><br />
         {metric}: {value}'),
         tooltip__beeswarmPlotly = glue(
-          '<b>{city}</b>
+          '<b>{city}, {iso2}</b>
         Country: {country}
         Value: {value}'),
         ## Add Colors for catgorical data
@@ -86,7 +95,6 @@
           "1.100 - 1.149"="#7E03A8",
           "1.150 +"="#0D0887")
       ) 
-    
     
   }
   { # 2.2 cleaned__tidy_metadata ------

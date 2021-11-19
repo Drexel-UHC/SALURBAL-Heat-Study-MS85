@@ -1,8 +1,5 @@
 #' Import data and check
-#' Issues:
-#' @1: data doesnt have salid. so we have to name match. There are 
-#'     are four cities that could not be linked
-#' @2: There is a city (Leon, 205103) which figure PNG is not available 
+
 
 
 {# 0. Setup ------
@@ -12,6 +9,7 @@
   library(janitor)
   library(sas7bdat)
   library(stringi)
+  library(sf)
   
   ## Load Helper functions
   source('../util.R')
@@ -20,7 +18,17 @@
   xwalk_l1 = read.csv("../../raw data/crosswalks/Sorted SALID.CSV") %>% as_tibble() %>% 
     clean_names() %>% 
     select(salid1=nsalid1 , city = city_name,country   ) %>% 
-    sanitize_city_names()
+    sanitize_city_names() %>% 
+    mutate_all(~as.character(.x))
+  save(xwalk_l1, file = "../../Clean/xwalk_l1.rdata")
+  
+  xwalk_l1_server = read.sas7bdat("../../raw data/crosswalks/l1_salurbal_5_27_21.sas7bdat") %>% 
+    as_tibble() %>% 
+    select(salid1 = SALID1, country = COUNTRY_NAME ) %>% 
+    distinct()%>% 
+    mutate_all(~as.character(.x))
+  save(xwalk_l1_server, file = "../../Clean/xwalk_l1_server.rdata")
+  
 }
 
 
