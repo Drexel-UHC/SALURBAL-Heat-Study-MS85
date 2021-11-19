@@ -71,14 +71,14 @@ BivariateRelationship_Server <- function(id, data, options){
         addCircles(radius = 50000, weight = 1, color = "#777777",
                    fillColor = ~hex, fillOpacity = 0.9,
                    label = ~tooltip__map %>% map(~HTML(.x))) %>% 
-        addLegend(position = "topright",
+        addLegend(position = "bottomleft",
                   title = str_wrap_leaflet_legend_title(unique(data1$metric)),
                   opacity = 0.9,
                   colors = options$leaflet_legend_colors, 
                   labels  = options$leaflet_legend_labels)
       
       data2 =  data %>% filter(metric == input$input2, age ==  unique(dataFiltered()$age))
-      pal <-  colorNumeric("plasma", data2$value, reverse = T)
+      pal <-  colorNumeric("plasma", data2$value, reverse = grepl("EDF",input$input2))
       leaflet2 = leaflet(data = data2,options = leafletOptions(zoomControl = FALSE)) %>%
         addProviderTiles("Esri.WorldGrayCanvas") %>%
         addCircles(radius = 50000, weight = 1, color = "#777777",
@@ -86,7 +86,7 @@ BivariateRelationship_Server <- function(id, data, options){
                    label = ~tooltip__map %>% map(~HTML(.x))
                    
         ) %>%
-        addLegend(position = "topright",
+        addLegend(position = "bottomleft",
                   title = str_wrap_leaflet_legend_title(unique(data2$metric)),
                   opacity = 0.9,
                   pal = pal, values = ~value)

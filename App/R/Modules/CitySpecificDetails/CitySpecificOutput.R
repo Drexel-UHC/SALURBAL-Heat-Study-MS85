@@ -2,7 +2,10 @@ CitySpecificOutput_UI <- function(id) {
   ns <- NS(id)
   tagList(
     div(class = 'detailsContainer',
-        div(class = 'detailsItem', imageOutput(ns('figure'))),
+        div(class = 'detailsFigureContainer',
+          div(class = 'detailsItemTitle','Temperature-mortality curve with histogram of daily temperatures'),
+          div(class = '', imageOutput(ns('figure')))
+        ),
         div(class = 'detailsItem',  reactableOutput(ns('table'))
         )
     )
