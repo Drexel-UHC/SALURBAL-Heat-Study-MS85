@@ -12,8 +12,7 @@ UnivariateBeeswarm_Server <- function(id,dataFiltered,by ){
     output$swarm <- renderPlotly({
       dataFiltered = dataFiltered() %>% 
         mutate_(by={{by}}) 
-      
-      
+    
       if (is.null(dataFiltered)) return()
       validate( need(nrow(dataFiltered)>1, 'No Data Available, please select another attribute combination.'))
       
@@ -30,6 +29,7 @@ UnivariateBeeswarm_Server <- function(id,dataFiltered,by ){
       ## Var Label
       var_short_tmp = unique(dfTmpOrdered$metric)
       yTmp = ifelse(by=="cat",unique(dfTmpOrdered$metric1),by) 
+      
       ## Plot
       gg = dfTmpOrdered %>% 
         ggplot(mapping=aes(value,by, text = tooltip__beeswarmPlotly)) + 
@@ -40,7 +40,12 @@ UnivariateBeeswarm_Server <- function(id,dataFiltered,by ){
              x= var_short_tmp)+ 
         scale_color_discrete(name = str_to_title(yTmp) %>% str_wrap_leaflet_legend_title())
       
+      ## Add Null line
+      if (str_detect(var_short_tmp,'Mortality risk')){gg=gg+geom_vline(xintercept = 1,lty = 2)}
+      if (str_detect(var_short_tmp,'EDF')){gg=gg+geom_vline(xintercept = 0,lty = 2)}
       
+      
+      ## Output
       ggplotly(gg, tooltip = 'text' )
       
     })
