@@ -1,19 +1,36 @@
 BivariateRelationship_UI <- function(id) {
   ns <- NS(id)
-  tagList(
-    
-    div( class = "bivarPanel bivarInputContainer",
-         div(  div(class = 'bivar-input-header',"Variable 1: Mortality"),
-               InputForm_UI(ns('input1')  )),
-         div(  div(class = 'bivar-input-header',"Variable 2: EDF/Temperature"),
-               uiOutput(ns('bivar_input2')))),
-    hr(),
-    div( class = "bivarPanel", 
-         tabsetPanel(
-           tabPanel("Map", uiOutput(ns("sync_map")) ),
-           tabPanel("Distribution of RR by second variable ", UnivariateBeeswarm_UI(ns('distribution')))
-         ))
+  sidebarLayout(
+    sidebarPanel(
+      width = 3,
+      div(  div(class = 'bivar-input-header',"Variable 1: Mortality"),
+            InputForm_UI(ns('input1')  )),
+      hr(),
+      div(  div(class = 'bivar-input-header',"Variable 2: EDF/Temperature"),
+            uiOutput(ns('bivar_input2')))
+    ),
+    mainPanel(   
+      width = 9,
+      tabsetPanel(
+        tabPanel("Map", uiOutput(ns("sync_map")) ),
+        tabPanel("Distribution of RR by second variable ", UnivariateBeeswarm_UI(ns('distribution')))
+      )
+    )
   )
+  
+  # tagList(
+  #   div( class = "bivarPanel bivarInputContainer",
+  #        div(  div(class = 'bivar-input-header',"Variable 1: Mortality"),
+  #              InputForm_UI(ns('input1')  )),
+  #        div(  div(class = 'bivar-input-header',"Variable 2: EDF/Temperature"),
+  #              uiOutput(ns('bivar_input2'))) ),
+  #   hr(),
+  #   div( class = "bivarPanel", 
+  #        tabsetPanel(
+  #          tabPanel("Map", uiOutput(ns("sync_map")) ),
+  #          tabPanel("Distribution of RR by second variable ", UnivariateBeeswarm_UI(ns('distribution')))
+  #        ))
+  # )
 }
 
 BivariateRelationship_Server <- function(id, data, options){
