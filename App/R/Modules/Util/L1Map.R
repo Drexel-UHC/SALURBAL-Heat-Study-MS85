@@ -31,14 +31,11 @@ L1Map_Server <- function(id,data,dataFiltered, citySelected, options){
       print(zoomTmp)
       radiusDefault = 50000
       radiusTmp = case_when(
-        zoomTmp<=3~radiusDefault,
-        zoomTmp==4~radiusDefault/2,
-        zoomTmp==5~radiusDefault/3,
-        TRUE~radiusDefault/4)
-      
-      
-      if (zoomTmp>3){  
-        } 
+        zoomTmp<5~radiusDefault,
+        zoomTmp==5~radiusDefault*0.7,
+        zoomTmp==6~radiusDefault*0.5,
+        zoomTmp==7~radiusDefault*0.3,
+        TRUE~radiusDefault*0.2)
       if (str_detect(unique(dataFiltered()$metric),'risk ')){
         leafletProxy("map", data = dataFiltered()) %>%
           clearShapes()  %>% 
