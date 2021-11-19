@@ -191,8 +191,14 @@
       set_names( unique(xwalk_metrics_bivar2_cold$grp) )
     
     ## City Choices
-    citiesTmp = cleaned__tidy_data %>% select(salid1, city) %>%  distinct()
-    options__input$cities = citiesTmp$salid1 %>% set_names(citiesTmp$city)
+    citiesTmp = cleaned__tidy_data %>% mutate(city = paste0(city,", ",iso2)) %>% 
+      count(city,salid1, country) %>% 
+      arrange(country, city)
+    options__input$cities =  map(unique(citiesTmp$country),
+                                 ~{citiesTmp %>%  filter(country==.x) %>% pull(salid1) %>% 
+                                     set_names(citiesTmp %>%  filter(country==.x) %>% pull(city))}) %>% 
+      set_names( unique(citiesTmp$country) )
+    
     
     ## color/hex choices
     options__input$leaflet_legend_labels = cleaned__tidy_data %>% drop_na() %>%  count(cat, hex) %>% pull(cat)
