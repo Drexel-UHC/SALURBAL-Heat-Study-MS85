@@ -33,7 +33,17 @@
   align-self: center;
 }
 
-.popupText {
-  font-weight: 800;
+/* Popup */
+.popup {
+  font-size: 12px;
+}
+
+.popupTitle {
+  font-weight: 700;
   font-size: 15px;
+  text-decoration: underline;
+}
+
+.popupVar {
+  font-weight: 700;
 }

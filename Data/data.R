@@ -81,8 +81,12 @@
           "RR of heat-related mortality"="Mortality risk per 1C higher extreme heat"),
         ## Create tooltips
         tooltip__map = glue(
-          '<span class="map-tooltip-header">{city}, {iso2}</span><br />
-        {metric}: {value}'),
+          '<div class = "popup">
+          <div class = "popupTitle">{city}, {iso2}</div>
+          <span class = "popupVar">Climate Zone</span>: {climate} <br>
+          <span class = "popupVar">{metric}</span>: {value}
+          </div> '
+        ),
         tooltip__beeswarmPlotly = glue(
           '<b>{city}, {iso2}</b>
         Country: {country}

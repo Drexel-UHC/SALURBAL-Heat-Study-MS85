@@ -65,15 +65,17 @@ L1Map_Server <- function(id,data,dataFiltered, citySelected, options){
         ## Get centroid
         req(citySelected())
         ptTmp = dataFiltered() %>% filter(salid1 == citySelected()) 
-        cityTmp =  HTML(paste0('<span class = "popupText">',ptTmp$city,'</span>'))
         longTmp = as.numeric( ptTmp$long)
         latTmp = as.numeric(ptTmp$lat)
         
+        ## Popup content
+        popupContent =HTML(ptTmp$tooltip__map)
+         
         ## Manipulate map
         leafletProxy("map") %>% 
           clearPopups() %>% 
           setView(lng = longTmp,lat=latTmp, zoom =5) %>%
-          addPopups(longTmp, latTmp, cityTmp )
+          addPopups(longTmp, latTmp, popupContent )
       }
     })
     

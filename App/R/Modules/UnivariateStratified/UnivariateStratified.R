@@ -12,8 +12,7 @@ UnivariateStratified_UI <- function(id) {
       tabsetPanel(
         tabPanel('Map',L1Map_UI(ns('map'))),
         tabPanel('By Country',UnivariateBeeswarm_UI(ns('byCountry'))),
-        tabPanel('By Climate Zone',UnivariateBeeswarm_UI(ns('byClimate'))),
-        tabPanel('Table',reactableOutput(ns("selections")))
+        tabPanel('By Climate Zone',UnivariateBeeswarm_UI(ns('byClimate')))
         
       )
     )
@@ -25,14 +24,6 @@ UnivariateStratified_Server <- function(id,data, options){
     
     ## Data
     dataFiltered <- InputForm_Server('input',data,options$metric,options$age)
-    
-    ## Table
-    output$selections = renderReactable({
-      metricTmp = unique( dataFiltered()$metric)
-      dataFiltered() %>% 
-        select(City = city, Country = country, `Climate Zone`=climate, !!metricTmp:=value) %>% 
-        reactable() 
-      })
     
     ## Map
     L1Map_Server('map',data,dataFiltered,NULL,options)
