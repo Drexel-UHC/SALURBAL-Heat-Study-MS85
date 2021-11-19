@@ -25,8 +25,7 @@ CitySpecific_Server <- function(id,data,metadata, options){
     
     ### State: city selected
     citySelected = reactiveVal(value = unname(options$cities[1]))
-    observeEvent(citySelected(),print(citySelected()))
-    
+
     ### City Selection
     output$inputCity = renderUI({
       ns <- session$ns

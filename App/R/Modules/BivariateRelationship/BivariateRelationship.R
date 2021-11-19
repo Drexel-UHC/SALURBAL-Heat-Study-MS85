@@ -37,7 +37,6 @@ BivariateRelationship_Server <- function(id, data, options){
       df_bivar = dataFiltered() %>%
         select(salid1, age, cat, metric1 = metric) %>%
         left_join(data %>% filter(metric == input$input2) %>% select(salid1,metric,age,  value,tooltip__beeswarmPlotly))
-      print(df_bivar)
       df_bivar
     })
     
