@@ -38,6 +38,7 @@
     input = list()
     input$metric = "Mean Temperature"
     input$metric = "Mortality risk per 1C higher extreme heat"
+    input$metric = "EDF due to extreme heat"
     input$age = "All-Ages"
     by='country'
     dataFiltered = data %>%
