@@ -6,6 +6,7 @@
   library(sas7bdat)
   library(stringi)
   library(glue)
+  library(classInt)
   
   ## Load Helper functions
   source('R/util.R')
@@ -41,7 +42,16 @@
                        'af_due_to_heat','af_due_to_extreme_heat')) %>% 
     mutate( value = ifelse(str_detect(metric,'af'),
                            as.numeric(value) %>% round(2),
-                           as.numeric(value) %>% round(1))) 
+                           as.numeric(value) %>% round(1))) %>% 
+    ## Jenkins cat for EDF_cold
+    mutate(grouper = paste(metric, age)) %>% 
+    group_by(grouper) %>% 
+    group_modify(~{
+      metricTmp = unique(.x$metric)
+      if (metricTmp == 'af_due_to_cold'){ categorize_jenks_edf_cold(.x)} else { .x } }) %>% 
+    ungroup() %>% 
+    select(-grouper)
+  
   ### process Josiah Data
   cleaned_data_josiah = df_JK %>% 
     mutate_all(~as.character(.x)) %>% 
@@ -51,7 +61,13 @@
     select(-name) %>% 
     pivot_wider(names_from = type, values_from = value) %>% 
     mutate(value = as.numeric(value) %>% round(3),
-           cat = factor(cat, levels =   c("<= 1.000" ,"1.001 - 1.049", "1.050 - 1.099", "1.100 - 1.149", "1.150 +"  ))) %>% 
+           cat = factor(cat, levels =   c("<= 1.000" ,"1.001 - 1.049", "1.050 - 1.099", "1.100 - 1.149", "1.150 +"  )),
+           hex = cat %>% recode(
+             "<= 1.000"="#F0F921",
+             "1.001 - 1.049"="#F89441",
+             "1.050 - 1.099"="#CC4678",
+             "1.100 - 1.149"="#7E03A8",
+             "1.150 +"="#0D0887")) %>% 
     left_join(cleaned_data_jeff %>% select(salid1, city, country, climate) %>% distinct())
 }
 
@@ -90,14 +106,8 @@
         tooltip__beeswarmPlotly = glue(
           '<b>{city}, {iso2}</b>
         Country: {country}
-        Value: {value}'),
-        ## Add Colors for catgorical data
-        hex = cat %>% recode(
-          "<= 1.000"="#F0F921",
-          "1.001 - 1.049"="#F89441",
-          "1.050 - 1.099"="#CC4678",
-          "1.100 - 1.149"="#7E03A8",
-          "1.150 +"="#0D0887")
+        Value: {value}')
+   
       ) 
     
   }
@@ -202,7 +212,7 @@
     
     ## color/hex choices
     options__input$leaflet_legend_labels = cleaned__tidy_data %>% drop_na() %>%  count(cat, hex) %>% pull(cat)
-    options__input$leaflet_legend_colors = cleaned__tidy_data %>% drop_na()  %>% count(cat, hex) %>% pull(hex)
+    options__input$leaflet_legend_colors = xwalk_colors$hex
     
   }
   
