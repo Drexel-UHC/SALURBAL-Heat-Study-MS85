@@ -1,19 +1,21 @@
 CitySpecific_UI <- function(id) {
   ns <- NS(id)
-  tagList(
-    fluidRow(
-      column(4,align = 'center', uiOutput(ns('inputCity'))),
-      column(8,align = 'center', InputForm_UI(ns('input')))
+  
+  sidebarLayout(
+    sidebarPanel(
+      width = 3,
+      uiOutput(ns('inputCity')),
+      InputForm_UI(ns('input'))
     ),
-    hr(),
-    fluidRow(
-      column(5,
-             L1Map_UI(ns("map"))),
-      column(7,
-             CitySpecificOutput_UI(ns('details')))
+    mainPanel(   
+      width = 9,
+      fluidRow(
+        column(5,
+               L1Map_UI(ns("map"))),
+        column(7,
+               CitySpecificOutput_UI(ns('details')))
+      )
     )
-    
-    
   )
 }
 
