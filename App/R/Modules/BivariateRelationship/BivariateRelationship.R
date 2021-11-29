@@ -17,20 +17,6 @@ BivariateRelationship_UI <- function(id) {
       )
     )
   )
-  
-  # tagList(
-  #   div( class = "bivarPanel bivarInputContainer",
-  #        div(  div(class = 'bivar-input-header',"Variable 1: Mortality"),
-  #              InputForm_UI(ns('input1')  )),
-  #        div(  div(class = 'bivar-input-header',"Variable 2: EDF/Temperature"),
-  #              uiOutput(ns('bivar_input2'))) ),
-  #   hr(),
-  #   div( class = "bivarPanel", 
-  #        tabsetPanel(
-  #          tabPanel("Map", uiOutput(ns("sync_map")) ),
-  #          tabPanel("Distribution of RR by second variable ", UnivariateBeeswarm_UI(ns('distribution')))
-  #        ))
-  # )
 }
 
 BivariateRelationship_Server <- function(id, data, options){
@@ -75,21 +61,36 @@ BivariateRelationship_Server <- function(id, data, options){
                   title = str_wrap_leaflet_legend_title(unique(data1$metric)),
                   opacity = 0.9,
                   colors = options$leaflet_legend_colors, 
-                  labels  = options$leaflet_legend_labels)
+                  labels  =  options$leaflet_legend_labels)
       
       data2 =  data %>% filter(metric == input$input2, age ==  unique(dataFiltered()$age))
-      pal <-  colorNumeric("plasma", data2$value, reverse = grepl("EDF",input$input2))
-      leaflet2 = leaflet(data = data2,options = leafletOptions(zoomControl = FALSE)) %>%
-        addProviderTiles("Esri.WorldGrayCanvas") %>%
-        addCircles(radius = 50000, weight = 1, color = "#777777",
-                   fillColor = ~pal(value), fillOpacity = 0.9,
-                   label = ~tooltip__map %>% map(~HTML(.x))
-                   
-        ) %>%
-        addLegend(position = "bottomleft",
-                  title = str_wrap_leaflet_legend_title(unique(data2$metric)),
-                  opacity = 0.9,
-                  pal = pal, values = ~value)
+      if (input$input2 == "EDF due to cold" ){
+        leaflet2 = leaflet(data = data2,options = leafletOptions(zoomControl = FALSE)) %>%
+          addProviderTiles("Esri.WorldGrayCanvas") %>%
+          addCircles(radius = 50000, weight = 1, color = "#777777",
+                     fillColor = ~hex, fillOpacity = 0.9,
+                     label = ~tooltip__map %>% map(~HTML(.x))) %>% 
+          addLegend(position = "bottomleft",
+                    title = str_wrap_leaflet_legend_title(unique(data1$metric)),
+                    opacity = 0.9,
+                    colors = options$leaflet_legend_colors, 
+                    labels  = options$leaflet_legend_labels)
+                       # sort(unique(data2$cat)))
+      } else {
+        pal <-  colorNumeric("plasma", data2$value, reverse = grepl("EDF",input$input2))
+        leaflet2 = leaflet(data = data2,options = leafletOptions(zoomControl = FALSE)) %>%
+          addProviderTiles("Esri.WorldGrayCanvas") %>%
+          addCircles(radius = 50000, weight = 1, color = "#777777",
+                     fillColor = ~pal(value), fillOpacity = 0.9,
+                     label = ~tooltip__map %>% map(~HTML(.x))
+                     
+          ) %>%
+          addLegend(position = "bottomleft",
+                    title = str_wrap_leaflet_legend_title(unique(data2$metric)),
+                    opacity = 0.9,
+                    pal = pal, values = ~value)
+      }
+     
       
       leafsync::sync(leaflet1,leaflet2, sync.cursor = F)
     })})

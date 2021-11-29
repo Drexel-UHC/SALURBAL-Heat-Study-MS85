@@ -211,7 +211,7 @@
     
     
     ## color/hex choices
-    options__input$leaflet_legend_labels = cleaned__tidy_data %>% drop_na() %>%  count(cat, hex) %>% pull(cat)
+    options__input$leaflet_legend_labels = cleaned__tidy_data %>% drop_na() %>% filter(metric=='Mortality risk per 1C lower extreme cold') %>% count(cat, hex) %>% pull(cat)
     options__input$leaflet_legend_colors = xwalk_colors$hex
     
   }

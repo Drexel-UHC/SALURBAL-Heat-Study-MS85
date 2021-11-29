@@ -38,15 +38,23 @@
     input = list()
     input$metric = "Mean Temperature"
     input$metric = "Mortality risk per 1C higher extreme heat"
+    input$metric = "Mortality risk per 1C lower extreme cold"
     input$metric = "EDF due to extreme heat"
+    input$metric = "EDF due to extreme cold"
     input$metric = "EDF due to cold"
     input$age = "All-Ages"
     by='country'
     dataFiltered = data %>%
       filter(metric == input$metric,
-                                   age == input$age)%>% 
+             age == input$age)%>% 
       mutate_(by={{by}}) 
+    
+    input$input2= "EDF due to cold"
+    data2 =  data %>% filter(metric == input$input2, age == "65+")
+    
   }
+  
+  
 }
 
 ## Data

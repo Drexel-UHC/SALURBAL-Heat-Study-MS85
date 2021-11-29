@@ -49,7 +49,6 @@ L1Map_Server <- function(id,data,dataFiltered, citySelected, options){
           addLegend(position = "bottomright",
                     title = str_wrap_leaflet_legend_title(unique(dataFiltered()$metric)),
                     opacity = 0.9,
-                    # colors = unique(dataFiltered$hex), labels  = sort(unique(dataFiltered$cat))
                     colors = options$leaflet_legend_colors, labels  =  sort(unique(dataFiltered$cat)))
       } else {
         pal <- colorpal()
