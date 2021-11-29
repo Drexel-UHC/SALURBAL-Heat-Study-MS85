@@ -38,6 +38,8 @@ L1Map_Server <- function(id,data,dataFiltered, citySelected, options){
         TRUE~radiusDefault*0.2)
       if (!all(is.na(dataFiltered()$hex))){
         dataFiltered = dataFiltered()
+        labelsTmp = options$leaflet_legend_labels
+        if (unique(dataFiltered$metric)!='Mortality risk per 1C lower extreme cold'){labelsTmp = sort(unique(dataFiltered$cat))}
         leafletProxy("map", data = dataFiltered) %>%
           clearShapes()  %>% 
           clearControls() %>%
@@ -49,7 +51,8 @@ L1Map_Server <- function(id,data,dataFiltered, citySelected, options){
           addLegend(position = "bottomright",
                     title = str_wrap_leaflet_legend_title(unique(dataFiltered()$metric)),
                     opacity = 0.9,
-                    colors = options$leaflet_legend_colors, labels  =  sort(unique(dataFiltered$cat)))
+                    colors = options$leaflet_legend_colors, 
+                    labels  =  labelsTmp  )
       } else {
         pal <- colorpal()
         leafletProxy("map", data = dataFiltered()) %>%
