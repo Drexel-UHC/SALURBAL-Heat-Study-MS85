@@ -33,7 +33,11 @@ CitySpecificOutput_Server <- function(id,metadata,dataFiltered,city){
       metadata %>%
         filter(salid1==city()) %>%
         select('Temperature Statistics' = metric, "C\u00b0" = value) %>% 
-        reactable()
+        reactable(
+          columns = list(
+            'Temperature Statistics'=colDef(minWidth = 125)
+          )
+        )
     })
     
   })
