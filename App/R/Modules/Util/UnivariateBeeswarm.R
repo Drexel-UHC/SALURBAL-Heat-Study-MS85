@@ -43,7 +43,6 @@ UnivariateBeeswarm_Server <- function(id,dataFiltered,by ){
       ## Add Null line
       if (str_detect(var_short_tmp,'Mortality risk')){gg=gg+geom_vline(xintercept = 1,lty = 2) + scale_x_continuous(trans='log10')}
       if (str_detect(var_short_tmp,'EDF')){gg=gg+geom_vline(xintercept = 0,lty = 2)}
-      if (str_detect(var_short_tmp,'Temperature')) {gg=gg + scale_x_continuous(trans='log10')}
       
       ## Output
       ggplotly(gg, tooltip = 'text' )
