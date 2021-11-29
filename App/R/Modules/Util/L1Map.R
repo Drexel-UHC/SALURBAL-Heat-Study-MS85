@@ -36,8 +36,9 @@ L1Map_Server <- function(id,data,dataFiltered, citySelected, options){
         zoomTmp==6~radiusDefault*0.5,
         zoomTmp==7~radiusDefault*0.3,
         TRUE~radiusDefault*0.2)
-      if (str_detect(unique(dataFiltered()$metric),'risk ')){
-        leafletProxy("map", data = dataFiltered()) %>%
+      if (!all(is.na(dataFiltered()$hex))){
+        dataFiltered = dataFiltered()
+        leafletProxy("map", data = dataFiltered) %>%
           clearShapes()  %>% 
           clearControls() %>%
           addCircles(radius = radiusTmp, weight = 1, color = "#777777",
@@ -48,7 +49,8 @@ L1Map_Server <- function(id,data,dataFiltered, citySelected, options){
           addLegend(position = "bottomright",
                     title = str_wrap_leaflet_legend_title(unique(dataFiltered()$metric)),
                     opacity = 0.9,
-                    colors = options$leaflet_legend_colors, labels  = options$leaflet_legend_labels)
+                    # colors = unique(dataFiltered$hex), labels  = sort(unique(dataFiltered$cat))
+                    colors = options$leaflet_legend_colors, labels  =  sort(unique(dataFiltered$cat)))
       } else {
         pal <- colorpal()
         leafletProxy("map", data = dataFiltered()) %>%
