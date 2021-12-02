@@ -71,7 +71,7 @@ BivariateRelationship_Server <- function(id, data, options){
                      fillColor = ~hex, fillOpacity = 0.9,
                      label = ~tooltip__map %>% map(~HTML(.x))) %>% 
           addLegend(position = "bottomleft",
-                    title = str_wrap_leaflet_legend_title(unique(data1$metric)),
+                    title = str_wrap_leaflet_legend_title(unique(data2$metric)),
                     opacity = 0.9,
                     colors = options$leaflet_legend_colors, 
                     labels  = options$leaflet_legend_labels)
