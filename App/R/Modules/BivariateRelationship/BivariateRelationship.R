@@ -74,7 +74,7 @@ BivariateRelationship_Server <- function(id, data, options){
                     title = str_wrap_leaflet_legend_title(unique(data2$metric)),
                     opacity = 0.9,
                     colors = options$leaflet_legend_colors, 
-                    labels  = options$leaflet_legend_labels)
+                    labels  = data2 %>% count(cat) %>% pull(cat))
                        # sort(unique(data2$cat)))
       } else {
         pal <-  colorNumeric("plasma", data2$value, reverse = grepl("EDF",input$input2))
