@@ -25,6 +25,10 @@ sanitize_city_names = function(dfTmp){
 
 xwalk_colors =tibble(hex =  c("#F0F921","#F89441","#CC4678","#7E03A8","#0D0887")) %>% mutate(row = row_number())
 
+print_digits = function(x){
+  if((x-floor(x))==0){paste0(x,".0")}else {x}
+}
+
 categorize_jenks_edf_cold = function(dfTmp){
   
     ## Natural Breaks
@@ -33,12 +37,16 @@ categorize_jenks_edf_cold = function(dfTmp){
       mutate(row = row_number(),
              brk =  case_when(
                row ==1 ~round(brk,2),
-               TRUE ~  round(brk,2)+0.1),
-             ahead = lead(brk, default = 9999999)-0.01,
-             cat = case_when(
-               row == 5 ~ glue("{brk} +"),
-               TRUE ~ glue("{brk} - {ahead}"))) %>% 
-      left_join(xwalk_colors)
+               TRUE ~  round(brk,2)+0.01),
+             ahead = lead(brk, default = 9999999)-0.01
+            ) %>% 
+
+      left_join(xwalk_colors) %>% 
+      rowwise() %>% 
+      mutate( cat = case_when(
+        row == 5 ~ glue("{print_digits(round(brk,1))} +"),
+        TRUE ~ glue("{print_digits(round(brk,1))} - {print_digits(round(ahead+0.01,1)-0.1)}"))) %>% 
+      ungroup()
     ## Assign Jenkins bins
     assigned_jenks = function(value,dfCat){
       dfCat %>%
@@ -49,7 +57,7 @@ categorize_jenks_edf_cold = function(dfTmp){
     }
     
     ## Return
-    dfTmp %>%
+    dfTmp %>% 
       rowwise() %>% 
       mutate(cat = assigned_jenks(value,dfCat) ) %>% 
       ungroup() %>% 
