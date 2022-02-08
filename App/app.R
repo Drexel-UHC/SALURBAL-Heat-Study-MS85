@@ -44,7 +44,7 @@ ui <- fluidPage(
   tags$head(includeHTML("HTML/headScripts.html")),
   includeHTML("HTML/appHeader.html"),
   navbarPage( id = 'navbar',
-              title = "COVID-19 in SALURBAL Countries",
+              title = "Heat and mortality in SALURBAL Countries",
               tabPanel("Home",includeHTML("HTML/homePaperIntro.html")),
               tabPanel("Effects of temperature",UnivariateStratified_UI("univar")),
               tabPanel("Comparison of effects",BivariateRelationship_UI("bivar")),
