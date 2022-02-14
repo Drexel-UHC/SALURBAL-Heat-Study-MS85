@@ -6,6 +6,9 @@ due to data use agreements with the various countries.
 
 The file 00.0.RunGeneric.R calls in all other files needed.
 
+Additional city-specific results and summary information can be found in an interactive web application here:
+   https://drexel-uhc.shinyapps.io/MS85/
+
 All the code used here is heavily based on the code used for the analysis in the paper
    "Mortality risk attributable to high and low ambient temperature:
      a multi-country study" by Antonio Gasparrini and collaborators (The Lancet, 2015)
