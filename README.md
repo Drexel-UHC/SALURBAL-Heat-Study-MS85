@@ -8,6 +8,9 @@ The file 00.0.RunGeneric.R calls in all other files needed.
 
 Additional city-specific results and summary information can be found in an interactive web application here:
    https://drexel-uhc.shinyapps.io/MS85/
+   
+The data and code repository for estimating daily temperatures is here:
+   https://github.com/Drexel-UHC/salurbal_heat
 
 All the code used here is heavily based on the code used for the analysis in the paper
    "Mortality risk attributable to high and low ambient temperature:
@@ -16,3 +19,4 @@ All the code used here is heavily based on the code used for the analysis in the
 We downloaded their code from here: 
    https://github.com/gasparrini/2015_gasparrini_Lancet_Rcodedata
 and edited it as needed for our analysis.
+
