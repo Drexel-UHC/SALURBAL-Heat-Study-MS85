@@ -32,7 +32,7 @@ BivariateRelationship_Server <- function(id, data, options){
       selectInput(ns("input2"),
                   label = "Select Metric",
                   choices = optionsTmp)
-    
+      
     })
     
     bivarData = reactive({
@@ -52,16 +52,32 @@ BivariateRelationship_Server <- function(id, data, options){
       req(input$input2)
       validate(need(nrow( dataFiltered() >1),"Need Data"))
       data1 = dataFiltered() 
-      leaflet1 = leaflet(data = data1,options = leafletOptions(zoomControl = FALSE)) %>%
-        addProviderTiles("Esri.WorldGrayCanvas") %>%
-        addCircles(radius = 50000, weight = 1, color = "#777777",
-                   fillColor = ~hex, fillOpacity = 0.9,
-                   label = ~tooltip__map %>% map(~HTML(.x))) %>% 
-        addLegend(position = "bottomleft",
-                  title = str_wrap_leaflet_legend_title(unique(data1$metric)),
-                  opacity = 0.9,
-                  colors = options$leaflet_legend_colors, 
-                  labels  =  options$leaflet_legend_labels)
+      if (unique(data1$metric) %in% c("Relative risk at 5th percentile",'Relative risk at 95th percentile' )){
+        pal <-  colorNumeric("plasma", data1$value)
+        leaflet1 = leaflet(data = data1,options = leafletOptions(zoomControl = FALSE)) %>%
+          addProviderTiles("Esri.WorldGrayCanvas") %>%
+          addCircles(radius = 50000, weight = 1, color = "#777777",
+                     fillColor = ~pal(value), fillOpacity = 0.9,
+                     label = ~tooltip__map %>% map(~HTML(.x))
+                     
+          ) %>%
+          addLegend(position = "bottomleft",
+                    title = str_wrap_leaflet_legend_title(unique(data1$metric)),
+                    opacity = 0.9,
+                    pal = pal, values = ~value)
+        
+      } else {
+        leaflet1 = leaflet(data = data1,options = leafletOptions(zoomControl = FALSE)) %>%
+          addProviderTiles("Esri.WorldGrayCanvas") %>%
+          addCircles(radius = 50000, weight = 1, color = "#777777",
+                     fillColor = ~hex, fillOpacity = 0.9,
+                     label = ~tooltip__map %>% map(~HTML(.x))) %>% 
+          addLegend(position = "bottomleft",
+                    title = str_wrap_leaflet_legend_title(unique(data1$metric)),
+                    opacity = 0.9,
+                    colors = options$leaflet_legend_colors, 
+                    labels  =  options$leaflet_legend_labels)
+      }
       
       data2 =  data %>% filter(metric == input$input2, age ==  unique(dataFiltered()$age))
       if (input$input2 == "EDF due to cold" ){
@@ -75,7 +91,7 @@ BivariateRelationship_Server <- function(id, data, options){
                     opacity = 0.9,
                     colors = options$leaflet_legend_colors, 
                     labels  = data2 %>% count(cat) %>% pull(cat))
-                       # sort(unique(data2$cat)))
+        # sort(unique(data2$cat)))
       } else {
         pal <-  colorNumeric("plasma", data2$value, reverse = grepl("EDF",input$input2))
         leaflet2 = leaflet(data = data2,options = leafletOptions(zoomControl = FALSE)) %>%
@@ -90,7 +106,7 @@ BivariateRelationship_Server <- function(id, data, options){
                     opacity = 0.9,
                     pal = pal, values = ~value)
       }
-     
+      
       
       leafsync::sync(leaflet1,leaflet2, sync.cursor = F)
     })})
