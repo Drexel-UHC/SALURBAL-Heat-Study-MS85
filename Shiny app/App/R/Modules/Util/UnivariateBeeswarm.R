@@ -15,6 +15,7 @@ UnivariateBeeswarm_Server <- function(id,dataFiltered,by ){
     
       if (is.null(dataFiltered)) return()
       validate( need(nrow(dataFiltered)>1, 'No Data Available, please select another attribute combination.'))
+      validate( need(!(is.na(unique(dataFiltered$cat))&(by=='cat') ), 'No Categorical Data Available for the selected Mortality metric, please select another attribute combination.'))
       
 
       ## Arrange by stratified varianble average
