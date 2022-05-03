@@ -5,12 +5,10 @@
 {# 0. Setup ------
   
   ## Dependencies
-  library(tidyverse)  
-  library(janitor)
-  library(sas7bdat)
-  library(stringi)
-  library(sf)
-  
+  packages =  c('rstudioapi','tidyverse','janitor','sf','stringi','readxl')
+  lapply(packages, require, character.only = TRUE)
+  setwd(dirname(rstudioapi::getActiveDocumentContext()$path)) ## set directory to current file.
+    
   ## Load Helper functions
   source('../util.R')
   
@@ -34,7 +32,7 @@
 
 
 {# 1. Josiah Data------
-  df_JK = read_csv("../../raw data/heat_app_rr.csv") %>% clean_names() %>% 
+  df_JK = read_excel("../../raw data/heat_app_rr_5-3-22.xlsx") %>% clean_names() %>% 
     mutate(age = age %>% recode("ALLAGES"="Crude",
                                 'AGE65PLUS'="65+"))
 }
