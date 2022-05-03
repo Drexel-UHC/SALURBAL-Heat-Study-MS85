@@ -1,24 +1,23 @@
 {# 0. Setup ------
   
   ## Dependencies
-  library(tidyverse)  
-  library(janitor)
-  library(sas7bdat)
-  library(stringi)
-  library(glue)
-  library(classInt)
+  packages =  c('rstudioapi','tidyverse','janitor','sas7bdat','stringi','glue','classInt')
+  lapply(packages, require, character.only = TRUE)
+  setwd(dirname(rstudioapi::getActiveDocumentContext()$path)) ## set directory to current file.
+  
+  
   
   ## Load Helper functions
   source('R/util.R')
   
   ## Load Centroids
-  load("../../SALURBAL Dashboard Portal/Data/Clean/Spatial/df__l1_centroids.rdata ")
+  load("../../../SALURBAL Dashboard Portal/data-pipeline/clean/spatial/df__l1_centroids.rdata")
   
   ## Load processed data
   load("R/Import Data/imported_data.rdata")
   
   ## Load crosswalks
-  load("../../SALURBAL Dashboard Portal/Data/Clean/Crosswalks/xwalk_iso2.rdata")
+  load("../../../SALURBAL Dashboard Portal/data-pipeline/clean/crosswalks/xwalk_iso2.rdata")
   load("Clean/xwalk_l1.rdata")
   load("Clean/xwalk_l1_server.rdata")
   
@@ -55,9 +54,16 @@
   ### process Josiah Data
   cleaned_data_josiah = df_JK %>% 
     mutate_all(~as.character(.x)) %>% 
-    pivot_longer(cols = c("rr_99vs95_per1c",  "rrcat_p99"  ,   "rr_1vs5_per1c" ,  "rrcat_p1")) %>% 
-    mutate(type = ifelse(str_detect(name, 'per1c'),"value",'cat'),
-           metric = ifelse(str_detect(name, '99'),"RR of heat-related mortality","RR of cold-related mortality")) %>% 
+    pivot_longer(cols = c("rr_99vs95_per1c", "rrcat_p99",  
+                          "rr_at_p5", "rr_at_p95",
+                          "rr_1vs5_per1c", "rrcat_p1")) %>% 
+    mutate(type = ifelse(str_detect(name, 'rrcat'),"cat",'value'),
+           metric = case_when(
+             name%in%c("rr_1vs5_per1c","rrcat_p1")~'RR of cold-related mortality',
+             name%in%c("rr_99vs95_per1c","rrcat_p99")~'RR of heat-related mortality',
+             name=='rr_at_p5'~"Relative risk at 5th percentile",
+             name=='rr_at_p95'~"Relative risk at 95th percentile"
+           )) %>% 
     select(-name) %>% 
     pivot_wider(names_from = type, values_from = value) %>% 
     mutate(value = as.numeric(value) %>% round(3),
@@ -107,7 +113,7 @@
           '<b>{city}, {iso2}</b>
         Country: {country}
         Value: {value}')
-   
+        
       ) 
     
   }
@@ -154,6 +160,8 @@
         grp = metric %>% recode(
           'Mortality risk per 1C higher extreme heat'="Relative Risk",
           'Mortality risk per 1C lower extreme cold'="Relative Risk",
+          'Relative risk at 5th percentile'="Relative Risk",
+          'Relative risk at 95th percentile'="Relative Risk",
           'Mean Temperature'="Temperature",
           'Median Temperature'="Temperature",
           'EDF due to heat'="Excess Death Fraction (Hot)",
@@ -170,6 +178,8 @@
         order_metric = metric %>% recode(
           'Mortality risk per 1C higher extreme heat'=1,
           'Mortality risk per 1C lower extreme cold'=2,
+          'Relative risk at 5th percentile'=1,
+          'Relative risk at 95th percentile'=2,
           'Mean Temperature'=1,
           'Median Temperature'=2,
           'EDF due to heat'=2,
@@ -187,7 +197,16 @@
     
     
     ## Univariate Choices
-    options__input$metric = map(unique(xwalk_metrics$grp), ~{xwalk_metrics %>%  filter(grp==.x) %>% pull(metric)  }) %>% 
+    options__input$metric = map(unique(xwalk_metrics$grp), 
+                                ~{xwalk_metrics %>%  
+                                    filter(!metric%in%c('Relative risk at 95th percentile','Relative risk at 5th percentile')) %>% 
+                                    filter(grp==.x) %>% 
+                                    pull(metric)  }) %>% 
+      set_names( unique(xwalk_metrics$grp) )
+    options__input$metric_v2 = map(unique(xwalk_metrics$grp), 
+                                ~{xwalk_metrics %>%  
+                                    filter(grp==.x) %>% 
+                                    pull(metric)  }) %>% 
       set_names( unique(xwalk_metrics$grp) )
     options__input$age = unique(cleaned__tidy_data$age) %>% sort(decreasing = T)
     options__input$by = c("Country"="country",'Climate'='climate')
