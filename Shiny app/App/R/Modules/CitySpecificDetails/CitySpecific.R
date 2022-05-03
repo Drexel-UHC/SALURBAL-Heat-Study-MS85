@@ -23,7 +23,7 @@ CitySpecific_Server <- function(id,data,metadata, options){
   moduleServer(id,function(input, output, session) {
     
     ### Data
-    dataFiltered <- InputForm_Server('input',data,options$metric,options$age)
+    dataFiltered <- InputForm_Server('input',data,options$metric_v2,options$age)
     
     ### State: city selected
     citySelected = reactiveVal(value = unname(options$cities[[1]][1]))
