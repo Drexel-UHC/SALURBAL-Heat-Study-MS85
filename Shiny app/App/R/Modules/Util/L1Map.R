@@ -21,7 +21,7 @@ L1Map_Server <- function(id,data,dataFiltered, citySelected, options){
     colorpal <- reactive({
       validate( need(nrow(dataFiltered())>0,"Need data") )
       metricTmp = unique(dataFiltered()$metric)
-      colorNumeric("plasma", dataFiltered()$value,reverse = grepl("EDF",metricTmp)) 
+      colorNumeric("plasma", dataFiltered()$value,reverse = !grepl("Temperature",metricTmp)) 
     })
     
     ## Update leaflet based on data() 
