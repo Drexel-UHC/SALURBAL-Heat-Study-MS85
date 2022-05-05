@@ -13,7 +13,7 @@ BivariateRelationship_UI <- function(id) {
       width = 9,
       tabsetPanel(
         tabPanel("Map", uiOutput(ns("sync_map")) ),
-        tabPanel("Distribution of RR by second variable ", UnivariateBeeswarm_UI(ns('distribution')))
+        tabPanel("Distribution of EDF/Temperature by categories of RR", UnivariateBeeswarm_UI(ns('distribution')))
       )
     )
   )
