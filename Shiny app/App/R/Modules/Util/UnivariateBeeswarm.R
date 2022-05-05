@@ -42,7 +42,7 @@ UnivariateBeeswarm_Server <- function(id,dataFiltered,by ){
         scale_color_discrete(name = str_to_title(yTmp) %>% str_wrap_leaflet_legend_title())
       
       ## Add Null line
-      if (str_detect(var_short_tmp,'Mortality risk')){gg=gg+geom_vline(xintercept = 1,lty = 2) + scale_x_continuous(trans='log10')}
+      if (str_detect(var_short_tmp,'risk')){gg=gg+geom_vline(xintercept = 1,lty = 2) + scale_x_continuous(trans='log10')}
       if (str_detect(var_short_tmp,'EDF')){gg=gg+geom_vline(xintercept = 0,lty = 2)}
       
       ## Output
